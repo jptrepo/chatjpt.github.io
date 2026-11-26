@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The AI Governance Tax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: plain-spoken and exact, like a good finance office explaining a bill
+   IDEA: an itemized tax assessment: governance arrives as line items on the AI bill
+   PICTURE: the live bill (headline, four figures, two stacked bars) beside the controls
+   COLOUR and TYPE: stone ground, black ink, brick for the governance "tax", white ruled panels; Schibsted Grotesk
+   LAYOUT: controls left, sticky bill right above 1000px; one column below with a sticky result strip */
+:root{color-scheme:light dark;
+--bg:light-dark(#e7e4df,#171513);--panel:light-dark(#fff,#211f1c);--ink:light-dark(#151311,#ece8e2);--muted:light-dark(#5b554e,#a9a198);
+--line:light-dark(#d3cdc5,#3a3631);--soft:light-dark(#f4f2ee,#1c1a17);--brick:light-dark(#c8371e,#ff7a5c);
+--c-ai:light-dark(#0072b2,#56a8e0);--c-safety:light-dark(#c8371e,#ff7a5c);--c-fairness:light-dark(#e69f00,#f0b43a);
+--c-workflow:light-dark(#007a5a,#39c49a);--c-logs:light-dark(#a8508f,#dc92c8);--c-premium:light-dark(#7d746a,#9a9188);
+--on-seg:light-dark(#fff,#14110f);
+--g-instant:light-dark(#00795f,#3fc9a5);--g-responsive:light-dark(#0072b2,#56a8e0);--g-drag:light-dark(#8f5a00,#f0b43a);--g-risk:light-dark(#c8371e,#ff7a5c);
+--a-rule:light-dark(#1f3c88,#8fa9f0);--a-platform:light-dark(#6a3d9a,#bf9ce8);--a-exp:light-dark(#8f5a00,#f0b43a);--a-cost:light-dark(#2e7d32,#7fd283);--a-practice:light-dark(#625c55,#aaa39b)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:clip}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1{font-size:clamp(34px,5.4vw,52px);line-height:1.05;margin:0;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+h2{font-size:22px;line-height:1.2;margin:0 0 14px;font-weight:700;text-wrap:balance}
+h3{font-size:17px;margin:0;font-weight:700}
+p{margin:0 0 10px}
+a{color:inherit;text-underline-offset:2px}
+.small,.note{font-size:13px;color:var(--muted)}
+button{font:inherit;color:inherit}
+.fig{position:relative;min-height:340px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+pre,.scroll{overflow-x:auto}code{overflow-wrap:anywhere}
+:focus-visible{outline:3px solid var(--c-ai);outline-offset:2px}
+
+/* header */
+.head{padding-bottom:18px}
+.sub{font-size:19px;max-width:60ch;margin:12px 0 18px;color:var(--muted);text-wrap:balance}
+.disc{display:flex;gap:10px;align-items:flex-start;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-size:14px;line-height:1.45;margin:0}
+.disc .mark{font-weight:800;color:var(--brick);font-size:18px;line-height:1}
+.disc button{display:none;border:0;background:none;text-decoration:underline;padding:0 0 0 4px;font-size:14px;cursor:pointer}
+
+/* layout */
+.layout{display:grid;gap:clamp(20px,3vw,40px);padding-top:8px}
+@media(min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);align-items:start}.results{position:sticky;top:14px;max-height:calc(100vh - 28px);overflow:auto}}
+.step{margin-bottom:30px}
+.step>h2{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.badge{font-size:13px;font-weight:700;background:var(--ink);color:var(--bg);padding:2px 8px;border-radius:99px}
+.linkbtn{background:none;border:0;padding:0;font-size:14px;text-decoration:underline;cursor:pointer;color:var(--muted);min-height:32px}
+
+/* preset cards */
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,180px),1fr));gap:10px}
+.pcard{position:relative;display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:10px;row-gap:2px;align-content:start;background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:12px;cursor:pointer;min-height:96px}
+.pcard input{position:absolute;opacity:0;pointer-events:none}
+.pcard .pico{grid-row:span 3;width:30px;height:30px;color:var(--muted)}
+.pcard .pname{font-weight:700;line-height:1.25}
+.pcard .psub,.pcard .pdesc{font-size:13px;color:var(--muted);line-height:1.35}
+.pcard:has(input:checked){border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.pcard:has(input:checked) .pico{color:var(--brick)}
+.pcard:has(input:focus-visible){outline:3px solid var(--c-ai);outline-offset:2px}
+.fed{margin-top:12px;padding:12px;border:1px dashed var(--line);border-radius:8px}
+.fed[hidden]{display:none}
+
+/* chips and dials */
+.grp{border:0;margin:0 0 18px;padding:0}
+.ghead{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.gname{font-weight:700}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:flex;align-items:center;min-height:44px;padding:8px 14px;border:1.5px solid var(--line);border-radius:99px;background:var(--panel);font-size:15px;line-height:1.2}
+.seg input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.seg input:focus-visible+span{outline:3px solid var(--c-ai);outline-offset:2px}
+.seg input:disabled+span{opacity:.45;cursor:not-allowed}
+.dial{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:10px}
+.dial .ghead{justify-content:space-between}
+.dprev{font-size:14px;font-weight:600;color:var(--brick);white-space:nowrap}
+.dprev.zero{color:var(--muted);font-weight:500}
+.dexp{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.tip{position:relative;display:inline-block}
+.tip summary{list-style:none;cursor:pointer;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;color:var(--muted);font-size:16px}
+.tip summary::-webkit-details-marker{display:none}
+.tip[open] summary{color:var(--ink);background:var(--soft)}
+.tipbody{position:absolute;z-index:5;left:0;top:32px;width:min(340px,80vw);background:var(--panel);border:1px solid var(--ink);border-radius:6px;padding:10px 12px;font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgb(0 0 0/.18)}
+.tipbody ul{margin:0;padding-left:16px}.tipbody li{margin:2px 0}.tipbody .cur{font-weight:700}
+
+/* results bill */
+.bill{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:clamp(16px,2.4vw,26px)}
+.ctx{font-size:14px;color:var(--muted);margin-bottom:6px}
+.hero{font-size:clamp(20px,2.3vw,25px);line-height:1.32;font-weight:500;margin:0 0 18px;text-wrap:pretty}
+.hero b{font-weight:800}.hero .g{color:var(--brick)}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kpi{background:var(--panel);padding:12px 14px}
+.kpi .kl{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.kpi .kv{font-size:clamp(26px,3.2vw,32px);font-weight:800;line-height:1.1;margin:4px 0;white-space:nowrap;font-variant-numeric:tabular-nums}
+.kpi .ks{font-size:13px;color:var(--muted)}
+.ill{display:inline-block;margin-right:4px;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:0 6px;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;padding:2px 9px;border-radius:99px;border:1.5px solid currentColor;white-space:nowrap}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.g-instant{color:var(--g-instant)}.g-responsive{color:var(--g-responsive)}.g-drag{color:var(--g-drag)}.g-risk{color:var(--g-risk)}
+.people{font-size:14px;margin:12px 0 0;padding:8px 12px;border-left:3px solid var(--line);background:var(--soft)}
+.people:empty{display:none}
+.cmp{margin-top:18px}
+.brow{margin-bottom:10px}
+.blab{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px}
+.btrack{display:flex;height:34px;background:var(--soft);border-radius:4px;overflow:hidden}
+.btrack span{display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:12px;font-weight:700;color:var(--on-seg);white-space:nowrap;border-right:1px solid var(--panel)}
+.btrack span:last-child{border-right:0}
+.s-ai{background:var(--c-ai)}.s-safety{background:var(--c-safety)}.s-fairness{background:var(--c-fairness);color:#1a1208!important}.s-workflow{background:var(--c-workflow)}.s-logs{background:var(--c-logs)}
+.s-premium{background:repeating-linear-gradient(135deg,var(--c-premium) 0 6px,color-mix(in srgb,var(--c-premium) 72%,var(--panel)) 6px 10px)}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:4px 14px;font-size:13px;margin-top:8px}
+.legend div{display:flex;gap:6px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:2px;flex:none}
+.legend b{margin-left:auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.btn{min-height:44px;padding:8px 16px;border:1.5px solid var(--ink);border-radius:6px;background:var(--panel);cursor:pointer;font-weight:600;font-size:15px}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.sm{min-height:36px;padding:4px 12px;font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tfoot td{font-weight:700;border-bottom:0}
+.pint{margin-top:12px}
+.shotdisc{display:none;font-size:13px;color:var(--muted);margin:14px 0 0}
+
+/* advisories */
+.advs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:10px}
+.adv{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.adv p{margin:8px 0 6px;font-size:15px}
+.adv .src{font-size:13px;color:var(--muted);margin:0}
+.at{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:700;padding:2px 10px;border-radius:99px;color:var(--panel)}
+.at-rule{background:var(--a-rule)}.at-platform{background:var(--a-platform)}.at-exp{background:var(--a-exp)}.at-cost{background:var(--a-cost)}.at-practice{background:var(--a-practice)}
+.adv.hide{display:none}
+
+/* latency */
+.lat{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#wfFig{min-height:220px}
+.cap{font-size:14px;color:var(--muted);margin-top:8px}
+.wf text{font:13px "Schibsted Grotesk",system-ui,sans-serif;fill:var(--ink)}
+.wf .mut{fill:var(--muted)}
+.feel{margin-top:32px}
+.feelbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.panes{display:grid;gap:12px}
+@media(min-width:760px){.panes{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.pane{border:1px solid var(--line);border-radius:8px;background:var(--soft);padding:12px;display:flex;flex-direction:column;min-height:330px}
+.pane h3{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pane .clock{font-size:13px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.msg{border-radius:10px;padding:8px 12px;margin-top:10px;font-size:15px;max-width:92%}
+.msg.q{align-self:flex-end;background:var(--ink);color:var(--bg)}
+.msg.a{background:var(--panel);border:1px solid var(--line);min-height:44px}
+.msg.a:empty::before{content:"…";color:var(--muted)}
+.steps{list-style:none;margin:10px 0 0;padding:0;font-size:13px}
+.steps li{padding:3px 0 3px 18px;position:relative;color:var(--muted)}
+.steps li::before{content:"";position:absolute;left:2px;top:9px;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--line)}
+.steps li.on{color:var(--ink);font-weight:600}.steps li.on::before{border-color:var(--brick);background:var(--brick)}
+.steps li.done{color:var(--ink)}.steps li.done::before{border-color:var(--ink);background:var(--ink)}
+.prog{height:6px;background:var(--line);border-radius:3px;margin-top:4px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--brick)}
+
+/* panels */
+details.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:10px}
+details.panel>summary{cursor:pointer;padding:14px 16px;min-height:44px;font-weight:700;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.panel>summary::after{content:"+";font-size:22px;line-height:1;color:var(--muted)}
+details.panel[open]>summary::after{content:"−"}
+details.panel>summary::-webkit-details-marker{display:none}
+.pbody{padding:0 16px 18px}
+.pbody h4{font-size:15px;margin:18px 0 6px}
+textarea{width:100%;min-height:160px;font:13px/1.45 ui-monospace,Menlo,Consolas,monospace;background:var(--soft);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px}
+.advgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:4px 28px}
+.advgrid h4{grid-column:1/-1;border-bottom:1px solid var(--line);padding-bottom:4px;margin-top:20px}
+.ai-row{display:grid;gap:4px;padding:6px 0}
+.ai-row label{font-size:14px;font-weight:600}
+.ai-row .def{font-size:12px;color:var(--muted)}
+.ai-row input[type=number],.ai-row select{font:inherit;font-size:16px;min-height:44px;padding:6px 10px;border:1.5px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);width:100%}
+.ai-row input[type=range]{width:100%;min-height:32px;accent-color:var(--brick)}
+.ai-row .rv{font-variant-numeric:tabular-nums;font-weight:600}
+.ai-chk{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:14px;cursor:pointer}
+.ai-chk input{width:22px;height:22px;margin:0;accent-color:var(--brick);flex:none}
+.ai-row.dis{opacity:.5}
+.ok{color:var(--g-instant);font-weight:700;white-space:nowrap}.bad{color:var(--g-risk);font-weight:700;white-space:nowrap}
+.we{border-top:1px solid var(--line);padding-top:12px;margin-top:16px}
+.we:first-child{border-top:0;margin-top:0}
+.we-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#recFig{min-height:300px}
+.src-list{padding-left:18px;font-size:14px}.src-list li{margin:3px 0}
+
+footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--ink);color:var(--bg);padding:10px max(4vw,14px) calc(10px + env(safe-area-inset-bottom));font-size:15px;display:none;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.mbar b{font-weight:800}
+@media(max-width:999px){.mbar.show{display:flex}body{padding-bottom:56px}}
+
+/* screenshot mode */
+body.shot .head .sub,body.shot .head .disc,body.shot .controls,body.shot #advSec,body.shot #latSec,body.shot #panelsSec,body.shot footer,body.shot .acts,body.shot #pinCmp,body.shot .people,body.shot .mbar{display:none!important}
+body.shot .layout{grid-template-columns:1fr;max-width:860px}
+body.shot .results{position:static;max-height:none}
+body.shot .shotdisc{display:block}
+body.shot .head{padding-bottom:6px}body.shot .head .wrap{max-width:860px}
+.exitshot{display:none;position:fixed;top:10px;right:10px;z-index:30}
+body.shot .exitshot{display:inline-flex}
+
+@media(max-width:700px){.disc .more{display:none}.disc.open .more{display:inline}.disc button{display:inline}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--muted);font-size:12px}.stack td:empty{display:none}.stack tfoot tr{display:grid}.kpis{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.kpi{padding:10px}}
+@media(prefers-reduced-motion:no-preference){.btrack span{transition:width .35s ease}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<button class="btn sm exitshot" id="exitShot" type="button">Exit screenshot mode</button>
+<header class="band head">
+  <div class="wrap">
+    <h1>The AI Governance Tax</h1>
+    <p class="sub">What safety, fairness and compliance controls do to your AI bill and your users' wait time</p>
+    <p class="disc" id="disc"><span class="mark" aria-hidden="true">≈</span><span><strong>Illustrative demo, not a pricing calculator.</strong> <span class="more">Rates are pulled from public AWS pricing pages and announcements (snapshot: November 2026), then simplified and rounded. Several regional multipliers are estimates. Use this to compare the <em>relative</em> cost and user-experience impact of governance choices, not to budget a real deployment. Compliance notes are general information, not legal advice.</span><button type="button" id="discBtn" aria-expanded="false">Show more</button></span></p>
+  </div>
+</header>
+
+<main class="band" style="padding-top:8px"><div class="wrap layout">
+  <section class="controls" aria-label="Settings">
+    <div class="step">
+      <h2>1. What kind of organization? <span class="badge" id="customBadge" hidden>Custom</span> <button type="button" class="linkbtn" id="resetBtn" hidden>Reset to preset</button></h2>
+      <div class="presets" id="presets" role="radiogroup" aria-label="Organization preset"></div>
+      <div class="fed" id="fed" hidden>
+        <div class="ghead"><span class="gname" id="fedLbl">Impact level</span></div>
+        <div class="seg" role="radiogroup" aria-labelledby="fedLbl">
+          <label><input type="radio" name="fedClass" value="C"><span>Class C (formerly Moderate)</span></label>
+          <label><input type="radio" name="fedClass" value="D"><span>Class D (formerly High)</span></label>
+        </div>
+        <p class="note" style="margin:8px 0 0">Class C runs in US commercial regions. Class D runs in AWS GovCloud (US).</p>
+      </div>
+    </div>
+    <div class="step">
+      <h2>2. How will it be used?</h2>
+      <div id="work"></div>
+    </div>
+    <div class="step">
+      <h2>3. How much governance?</h2>
+      <div id="dials"></div>
+    </div>
+  </section>
+
+  <aside class="results" id="results" aria-live="polite" aria-label="Results">
+    <div class="bill">
+      <p class="ctx" id="ctx"></p>
+      <p class="hero" id="hero"></p>
+      <div class="kpis" id="kpis"></div>
+      <p class="people" id="people"></p>
+      <div class="cmp" id="cmp"></div>
+      <div class="acts">
+        <button type="button" class="btn" id="pinBtn">Pin this setup</button>
+        <button type="button" class="btn" id="shotBtn">Screenshot mode</button>
+      </div>
+      <div id="pinCmp"></div>
+      <p class="shotdisc">≈ Illustrative demo, not a pricing calculator. Shows relative cost and wait time only. Not legal advice.</p>
+    </div>
+  </aside>
+</div></main>
+
+<section class="band" id="advSec" style="padding-top:0">
+  <div class="wrap">
+    <h2>What to know about this setup</h2>
+    <div class="advs" id="advList"></div>
+    <div class="acts" style="margin-top:10px"><button type="button" class="btn sm" id="advAll" hidden></button></div>
+    <p class="small" style="margin-top:10px">Not legal advice. Have counsel confirm before relying on any of these notes.</p>
+  </div>
+</section>
+
+<section class="band lat" id="latSec">
+  <div class="wrap">
+    <h2 id="latTitle">How long users wait for the first word</h2>
+    <p class="cap" id="wfCap" style="margin:0 0 10px"></p>
+    <div class="fig" id="wfFig"><svg class="wf" id="wf" role="img" aria-labelledby="latTitle"></svg></div>
+    <p class="cap">Bars show a typical request (p50). Thin whiskers reach a slow day (p95). Step timings are assumptions for illustration.</p>
+
+    <div class="feel">
+      <h2>Feel the latency</h2>
+      <div class="feelbar">
+        <button type="button" class="btn primary" id="feelGo">Ask the sample question</button>
+        <button type="button" class="btn" id="feelSkip">Skip</button>
+        <div class="seg" role="radiogroup" aria-label="Which day">
+          <label><input type="radio" name="feelDay" value="p50" checked><span>Typical day (p50)</span></label>
+          <label><input type="radio" name="feelDay" value="p95"><span>Bad day (p95)</span></label>
+        </div>
+      </div>
+      <div class="panes">
+        <div class="pane"><h3>No governance <span class="clock" id="clkL"></span></h3><div class="msg q" id="qL"></div><div class="msg a" id="aL"></div></div>
+        <div class="pane"><h3>Your setup <span class="clock" id="clkR"></span></h3><div class="msg q" id="qR"></div><ul class="steps" id="stepsR"></ul><div class="msg a" id="aR"></div></div>
+      </div>
+      <p class="cap">The sample answer is fixed text, revealed over the time the chosen answer length would take at the model's assumed speed.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="panelsSec">
+  <div class="wrap">
+    <details class="panel" id="pMath"><summary>Show the math: your inputs and itemized costs</summary><div class="pbody" id="mathBody"></div></details>
+    <details class="panel" id="pMethod"><summary>Method, assumptions and sources</summary><div class="pbody" id="methodBody"></div></details>
+    <details class="panel" id="pWE"><summary>Worked examples</summary><div class="pbody" id="weBody"></div></details>
+    <details class="panel" id="pRec"><summary>Records over 6 years</summary><div class="pbody"><p class="cap" id="recCap" style="margin-top:0"></p><div class="fig" id="recFig"><svg class="wf" id="rec" role="img" aria-label="Logs and records cost by month, months 1 to 72"></svg></div><div id="recTable"></div></div></details>
+    <details class="panel" id="pAdv"><summary>Advanced settings (for cloud architects)</summary><div class="pbody"><p class="note" style="margin-top:0">Every setting feeds the cost and wait-time math above. Each shows its default for the current preset.</p><div class="advgrid" id="advGrid"></div></div></details>
+  </div>
+</section>
+
+<footer class="band">
+  <div class="wrap">
+    <p><strong>Illustrative demo, not a pricing calculator.</strong> Rates are pulled from public AWS pricing pages and announcements (snapshot: November 2026), then simplified and rounded. Several regional multipliers are estimates. Use this to compare the <em>relative</em> cost and user-experience impact of governance choices, not to budget a real deployment. Compliance notes are general information, not legal advice.</p>
+    <p>Rates snapshot: November 2026.</p>
+  </div>
+</footer>
+<div class="mbar" id="mbar" aria-hidden="true"></div>
+<script>
+{
+// ===== Engine: PRICING, calcCost (§6), calcLatency (§7) =====
+const PRICING = {
+  asOf: "2026-11",
+  models: {
+    nova_micro: { tier: "Budget", name: "Amazon Nova Micro", in: 0.035, out: 0.14, family: "nova", govcloud: "yes",
+      latency: { ttftP50: 250, ttftP95: 550, tps: 150 } },
+    nova_pro: { tier: "Value", name: "Amazon Nova Pro", in: 0.80, out: 3.20, family: "nova", govcloud: "yes",
+      latency: { ttftP50: 340, ttftP95: 750, tps: 90 } },
+    haiku_55: { tier: "Fast", name: "Claude Haiku 5.5", in: 0.10, out: 0.50, inLong: 0.50, outLong: 2.50, longAbove: 100000,
+      family: "claude", govcloud: "unconfirmed", latency: { ttftP50: 400, ttftP95: 900, tps: 120 } },
+    sonnet_55: { tier: "Balanced", name: "Claude Sonnet 5.5", in: 2.00, out: 10.00, family: "claude", govcloud: "yes",
+      latency: { ttftP50: 750, ttftP95: 1600, tps: 85 } },
+    opus_55: { tier: "Premium", name: "Claude Opus 5.5", in: 4.00, out: 20.00, family: "claude", govcloud: "yes",
+      latency: { ttftP50: 1100, ttftP95: 2400, tps: 55 } },
+  },
+  regions: {
+    commercial: { label: "US commercial", claude: 1.0, nova: 1.0, guardrails: 1.0, lambda: 1.0, stepFunctions: 1.0,
+      cloudwatch: 1.0, dynamodb: 1.0, s3Standard: 1.0, s3DeepArchive: 1.0, s3Requests: 1.0, firehose: 1.0 },
+    us_geo: { label: "US data residency", claude: 1.10, nova: 1.0, guardrails: 1.0, lambda: 1.0, stepFunctions: 1.0,
+      cloudwatch: 1.0, dynamodb: 1.0, s3Standard: 1.0, s3DeepArchive: 1.0, s3Requests: 1.0, firehose: 1.0 },
+    eu_geo: { label: "EU data residency", claude: 1.10, nova: 1.314, guardrails: 1.0, lambda: 1.0,
+      stepFunctions: 1.0, cloudwatch: 1.0, dynamodb: 1.0, s3Standard: 1.0, s3DeepArchive: 1.0, s3Requests: 1.0, firehose: 1.0 },
+    govcloud: { label: "AWS GovCloud (US)", claude: 1.20, nova: 1.20, guardrails: 1.20, lambda: 1.00,
+      stepFunctions: 1.20, cloudwatch: 1.34, dynamodb: 1.20, s3Standard: 1.70, s3DeepArchive: 1.35, s3Requests: 1.20, firehose: 1.20 },
+  },
+  estimates: { eu_geo: ["nova"], govcloud: ["lambda", "cloudwatch", "s3Standard", "s3DeepArchive", "firehose"] },
+  guardrails: { content: 0.15, deniedTopics: 0.15, piiML: 0.10, grounding: 0.10, automatedReasoning: 0.17 },
+  lambda: { perMillionRequests: 0.20, arm64PerGBSecond: 0.0000133334,
+    pcIdlePerGBSecond: 0.0000033334, pcDurationPerGBSecond: 0.0000077778, pcSecondsPerMonth: 2628000 },
+  stepFunctions: { expressPerMillionRequests: 1.00, expressPerGBSecond: 0.00001667, standardPerMillionTransitions: 25.00 },
+  cloudwatch: { ingestStandardPerGB: 0.50, ingestIAPerGB: 0.25, dataProtectionPerGB: 0.12,
+    archivePerCompressedGBMonth: 0.03, metricPerMonth: 0.30 },
+  dynamodb: { perMillionWRU: 0.625, perMillionRRU: 0.125, storagePerGBMonth: 0.25, pitrPerGBMonth: 0.20 },
+  s3: { standardPerGBMonth: 0.023, deepArchivePerGBMonth: 0.00099, putPer1000: 0.005, transitionPer1000: 0.05,
+    metadataStandardKB: 8, metadataDeepArchiveKB: 32, lifecycleMinObjectKB: 128 },
+  firehose: { perGB: 0.029, recordRoundingKB: 5, maxBufferSeconds: 900, recordsPerObjectCap: 10000 },
+  batchDiscount: 0.50,
+  constants: { KB_PER_GB: 1048576, charsPerToken: 4, secondsPer30DayMonth: 2592000 },
+};
+
+const KB_PER_GB = 1048576;
+const units = (tokens) => Math.ceil((4 * tokens) / 1000);
+const LV = {
+  question: ["off", "light", "standard", "strict"],
+  answer: ["off", "light", "standard", "strict"],
+  fairness: ["off", "spot", "allAfter", "allBefore"],
+  human: ["off", "on"],
+  records: ["basic", "standard", "strict"],
+};
+const ge = (dial, v, min) => LV[dial].indexOf(v) >= LV[dial].indexOf(min);
+const REC = {
+  basic: { dp: false, metrics: 0, ledger: false, pitr: false, archive: false },
+  standard: { dp: true, metrics: 10, ledger: true, pitr: false, archive: false },
+  strict: { dp: true, metrics: 20, ledger: true, pitr: true, archive: true },
+};
+const CATS = [
+  ["ai", "AI model"], ["safety", "Safety filters"], ["fairness", "Fairness reviews"],
+  ["workflow", "Workflow & compute"], ["logs", "Logs & records"], ["premium", "Region premium"],
+];
+const policyTokens = (q) => (q === "strict" ? 600 : q === "standard" ? 300 : 0);
+const n0 = (v) => Math.round(v).toLocaleString("en-US");
+const pr = (r) => r.toFixed(r < 0.1 ? 3 : 2);
+
+// S3 archive (§6.9). Returns its four terms so each gets its own region multiplier.
+function archiveTerms(x, m) {
+  const recordKB = x.archiveKB, hot = x.archiveHot, ret = x.archiveRetention, N = x.N, mode = x.s3Mode;
+  const gbMonth = (N * recordKB) / KB_PER_GB;
+  let recordsPerObject, objects, firehose;
+  if (mode === "batched") {
+    recordsPerObject = Math.min(10000, (N / 2592000) * 900);
+    objects = Math.ceil(N / recordsPerObject - 1e-9);
+    firehose = ((N * (Math.ceil(recordKB / 5) * 5)) / KB_PER_GB) * 0.029;
+  } else { recordsPerObject = 1; objects = N; firehose = 0; }
+  const transitions = mode === "override" || recordsPerObject * recordKB >= 128;
+  const live = Math.min(m, ret);
+  let requests, hotGB, coldGB;
+  if (!transitions) {
+    requests = (objects / 1000) * 0.005; hotGB = live * gbMonth; coldGB = 0;
+  } else {
+    const cold = Math.max(0, live - hot);
+    hotGB = Math.min(live, hot) * gbMonth + (cold * objects * 8) / KB_PER_GB;
+    coldGB = cold * (gbMonth + (objects * 32) / KB_PER_GB);
+    requests = (objects / 1000) * (0.005 + (m > hot ? 0.05 : 0));
+  }
+  return { requests, hot: hotGB * 0.023, cold: coldGB * 0.00099, firehose, objects, recordsPerObject, transitions, hotGB, coldGB };
+}
+
+function calcCost(x) {
+  const P = PRICING, R = P.regions[x.region];
+  const model = P.models[x.model], judge = P.models[x.judge];
+  const N = x.N, m = x.month, lines = [];
+  const add = (cat, key, label, qty, rate, base, mult) => { lines.push({ cat, key, label, qty, rate, base, mult, regional: base * mult }); };
+  const Tp = policyTokens(x.question);
+  const fq = n0(N);
+
+  // 6.1 AI model
+  const useLong = !!model.inLong && x.Tq + x.Td + Tp > model.longAbove;
+  const rIn = useLong ? model.inLong : model.in, rOut = useLong ? model.outLong : model.out;
+  add("ai", "model", `${model.name}: reading and answering`, `${n0(x.Tq + x.Td)} in + ${n0(x.To)} out tokens × ${fq}`,
+    `$${pr(rIn)} / $${pr(rOut)} per 1M tokens`, (N * ((x.Tq + x.Td) * rIn + x.To * rOut)) / 1e6, R[model.family]);
+  // 6.2 policy instructions
+  if (Tp) add("safety", "policy", "Policy instructions in every prompt", `${Tp} tokens × ${fq}`, `$${pr(rIn)} per 1M tokens`,
+    (N * Tp * rIn) / 1e6, R[model.family]);
+  // 6.3 Guardrails
+  const G = P.guardrails;
+  const inF = x.question === "off" ? [] : x.question === "light" ? ["content"] : ["content", "deniedTopics", "piiML"];
+  const outF = x.answer === "off" ? [] : x.answer === "light" ? ["content"] : ["content", "deniedTopics", "piiML"];
+  const grounding = x.answer === "strict";
+  const ar = !!x.automatedReasoning && x.answer !== "off" && x.region !== "govcloud";
+  const scanned = x.scopeQuestionOnly ? x.Tq : x.Tq + x.Td;
+  const Uin = units(scanned);
+  const Uout = x.billPerChunk ? Math.ceil(x.To / x.chunkTokens) * units(x.chunkTokens) : units(x.To);
+  const Ug = units(x.Td + x.Tq + x.To);
+  const sumR = (fs) => fs.reduce((s, f) => s + G[f], 0);
+  const rateTxt = (fs) => fs.map((f) => "$" + G[f].toFixed(2)).join(" + ") + " per 1K units";
+  if (inF.length) add("safety", "grIn", `Bedrock Guardrails, input (${x.scopeQuestionOnly ? "question only" : "question + documents"})`,
+    `${Uin} units × ${inF.length} filter${inF.length > 1 ? "s" : ""} × ${fq}`, rateTxt(inF), (N / 1000) * Uin * sumR(inF), R.guardrails);
+  if (outF.length) add("safety", "grOut", "Bedrock Guardrails, output", `${Uout} units × ${outF.length} filter${outF.length > 1 ? "s" : ""} × ${fq}`,
+    rateTxt(outF), (N / 1000) * Uout * sumR(outF), R.guardrails);
+  if (grounding) add("safety", "grGround", "Contextual grounding check", `${Ug} units × ${fq}`, "$0.10 per 1K units", (N / 1000) * Ug * G.grounding, R.guardrails);
+  if (ar) add("safety", "grAR", "Automated Reasoning (1 policy)", `${Uout} units × ${fq}`, "$0.17 per 1K units", (N / 1000) * Uout * G.automatedReasoning, R.guardrails);
+  // 6.4 Fairness judge
+  const rate = { off: 0, spot: x.sampleRate, allAfter: 1, allBefore: 1 }[x.fairness];
+  if (rate > 0) {
+    const judgeIn = x.Tq + x.Td + Tp + x.To + x.rubricTokens;
+    const jl = !!judge.inLong && judgeIn > judge.longAbove;
+    const jIn = jl ? judge.inLong : judge.in, jOut = jl ? judge.outLong : judge.out;
+    let c = (N * rate * (judgeIn * jIn + x.judgeOutTokens * jOut)) / 1e6;
+    const batch = x.batchJudge && x.fairness !== "allBefore";
+    if (batch) c *= 0.5;
+    add("fairness", "judge", `Fairness judge: ${judge.name}${batch ? " (batch, 50% off)" : ""}`,
+      `${Math.round(rate * 100)}% of ${fq} × (${n0(judgeIn)} in + ${x.judgeOutTokens} out)`, `$${pr(jIn)} / $${pr(jOut)} per 1M tokens`, c, R[judge.family]);
+  }
+  // 6.5 Lambda
+  const fns = [];
+  if (ge("question", x.question, "standard")) fns.push({ name: "PII scrub", ms: 15 });
+  if (x.wholeAnswerCheck) fns.push({ name: "Whole-answer check", ms: 20 });
+  const coldRate = { steady: 0.01, bursty: 0.08, provisioned: 0 }[x.traffic];
+  for (const fn of fns) {
+    if (x.traffic === "provisioned") {
+      add("workflow", "lambdaPC_" + fn.name, `Lambda ${fn.name}: 10 warm instances`, "10 × 0.5 GB × 2,628,000 s", "$0.0000033334 per GB-s",
+        10 * 0.5 * 2628000 * 0.0000033334, R.lambda);
+      add("workflow", "lambda_" + fn.name, `Lambda ${fn.name}: requests`, `${fq} × ${fn.ms} ms × 0.5 GB`, "$0.20/1M + $0.0000077778 per GB-s",
+        N * (0.2 / 1e6 + (0.5 * fn.ms) / 1000 * 0.0000077778), R.lambda);
+    } else {
+      add("workflow", "lambda_" + fn.name, `Lambda ${fn.name} (512 MB)`, `${fq} × (${fn.ms} ms + ${coldRate * 100}% × 250 ms cold start)`,
+        "$0.20/1M + $0.0000133334 per GB-s", N * (0.2 / 1e6 + (0.5 * (fn.ms + coldRate * 250)) / 1000 * 0.0000133334), R.lambda);
+    }
+  }
+  // 6.6 consent lookup
+  if (x.question === "strict") add("workflow", "consent", "Consent / role lookup (DynamoDB read)", `1 RRU × ${fq}`, "$0.125 per 1M RRU", (N * 0.125) / 1e6, R.dynamodb);
+  // 6.7 orchestration + human review
+  if (x.orchestration === "express") add("workflow", "sfExpress", "Step Functions Express workflow", `${fq} runs × ${(Math.ceil(x.expressSeconds * 10) / 10).toFixed(1)} s × 64 MB`,
+    "$1.00/1M + $0.00001667 per GB-s", (N * 1.0) / 1e6 + N * (Math.ceil(x.expressSeconds * 10 - 1e-9) / 10) * (64 / 1024) * 0.00001667, R.stepFunctions);
+  if (x.orchestration === "standard") add("workflow", "sfStandard", "Step Functions Standard workflow", `${x.standardTransitions} transitions × ${fq}`,
+    "$25 per 1M transitions", (N * x.standardTransitions * 25) / 1e6, R.stepFunctions);
+  if (x.human === "on") {
+    add("workflow", "humanSF", "Human review workflow (2% escalated)", `6 transitions × ${n0(N * 0.02)}`, "$25 per 1M transitions", (N * 0.02 * 6 * 25) / 1e6, R.stepFunctions);
+    add("workflow", "humanQ", "Human review queue writes", `3 WRU × ${n0(N * 0.02)}`, "$0.625 per 1M WRU", (N * 0.02 * 3 * 0.625) / 1e6, R.dynamodb);
+  }
+  // 6.8 Logs
+  const logKB = x.logKB + (x.orchestration === "express" ? 2 : 0);
+  const V = (N * logKB) / KB_PER_GB;
+  const ia = x.logClass === "ia";
+  add("logs", "logIngest", `CloudWatch log ingestion (${ia ? "Infrequent Access" : "Standard"})`, `${logKB} KB × ${fq} = ${V.toFixed(2)} GB`,
+    `$${ia ? "0.25" : "0.50"} per GB`, V * (ia ? 0.25 : 0.5), R.cloudwatch);
+  if (x.dataProtection) add("logs", "logDP", "CloudWatch data protection (PII masking)", `${V.toFixed(2)} GB`, "$0.12 per GB", V * 0.12, R.cloudwatch);
+  const lm = Math.min(m, x.logRetention);
+  add("logs", "logStore", `Log storage (${x.logRetention} mo retention, month ${m})`, `${lm} mo × ${V.toFixed(2)} GB × ${x.compression} compression`,
+    "$0.03 per GB-month", lm * V * x.compression * 0.03, R.cloudwatch);
+  if (x.metricCount) add("logs", "metrics", "Custom metrics", `${x.metricCount} metrics`, "$0.30 per metric-month", x.metricCount * 0.3, 1);
+  // 6.9 ledger
+  if (x.ledger) {
+    add("logs", "ledgerW", "Decision ledger writes (DynamoDB)", `1 WRU × ${fq}`, "$0.625 per 1M WRU", (N * 0.625) / 1e6, R.dynamodb);
+    const sm = Math.min(m, 12);
+    add("logs", "ledgerS", `Decision ledger storage${x.pitr ? " + point-in-time recovery" : ""}`, `${sm} mo × 1.1 KB × ${fq}`,
+      `$0.25${x.pitr ? " + $0.20" : ""} per GB-month`, ((sm * N * 1.1) / KB_PER_GB) * (0.25 + (x.pitr ? 0.2 : 0)), R.dynamodb);
+  }
+  let arch = null;
+  if (x.archive) {
+    arch = archiveTerms(x, m);
+    const lbl = { batched: "Firehose batched", default: "default lifecycle", override: "forced to Deep Archive" }[x.s3Mode];
+    add("logs", "s3Req", `Audit archive requests (${lbl})`, `${n0(arch.objects)} objects${arch.transitions && m > x.archiveHot ? " + transitions" : ""}`,
+      `$0.005 PUT${arch.transitions ? " + $0.05 transition" : ""} per 1K`, arch.requests, R.s3Requests);
+    add("logs", "s3Hot", "Audit archive, S3 Standard storage", `${arch.hotGB.toFixed(2)} GB`, "$0.023 per GB-month", arch.hot, R.s3Standard);
+    if (arch.coldGB) add("logs", "s3Cold", "Audit archive, Glacier Deep Archive", `${arch.coldGB.toFixed(2)} GB`, "$0.00099 per GB-month", arch.cold, R.s3DeepArchive);
+    if (arch.firehose) add("logs", "firehose", "Firehose ingestion (5 KB rounding)", `${fq} records`, "$0.029 per GB", arch.firehose, R.firehose);
+  }
+  const cats = { ai: 0, safety: 0, fairness: 0, workflow: 0, logs: 0, premium: 0 };
+  let total = 0;
+  for (const l of lines) { cats[l.cat] += l.base; cats.premium += l.regional - l.base; total += l.regional; }
+  const people = x.human === "on" ? N * 0.02 * (x.reviewerMinutes / 60) * x.reviewerHourly : 0;
+  return { lines, cats, total, people, Tp, ar, fns, arch };
+}
+
+function baselineOf(x) {
+  return { ...x, region: "commercial", question: "off", answer: "off", fairness: "off", human: "off", records: "basic",
+    orchestration: "none", automatedReasoning: false, wholeAnswerCheck: false, modelInWorkflow: false, scopeQuestionOnly: false,
+    logClass: "standard", dataProtection: false, logRetention: 1, metricCount: 0, ledger: false, pitr: false, archive: false,
+    traffic: "steady", outputMode: "async", billPerChunk: false };
+}
+
+function kpis(x) {
+  const c = calcCost(x), b = calcCost(baselineOf(x));
+  const adds = c.total - b.total;
+  return { c, b, total: c.total, base: b.total, adds, share: c.total ? adds / c.total : 0, mult: b.total ? c.total / b.total : 1, per1000: (c.total / x.N) * 1000 };
+}
+
+// ----- Latency (§7) -----
+function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+function latencyPlan(x) {
+  // The ordered steps (p50/p95 in ms) on the path to the first word
+  const S = [];
+  const coldRate = { steady: 0.01, bursty: 0.08, provisioned: 0 }[x.traffic];
+  const consent = x.question === "strict", pii = ge("question", x.question, "standard");
+  const outOn = x.answer !== "off";
+  const outSync = outOn && x.outputMode === "sync";
+  const groundingLike = x.answer === "strict" || (x.automatedReasoning && outOn && x.region !== "govcloud");
+  const judgeSync = x.fairness === "allBefore";
+  const broken = judgeSync || x.wholeAnswerCheck || x.modelInWorkflow;
+  return { consent, pii, coldRate, outOn, outSync, groundingLike, judgeSync, broken,
+    orch: x.orchestration, inGr: x.question !== "off", whole: x.wholeAnswerCheck };
+}
+
+function calcLatency(x, draws = 5000) {
+  const L = latencyPlan(x);
+  const rnd = mulberry32(42);
+  const mk = (p50, p95) => [Math.log(p50), (Math.log(p95) - Math.log(p50)) / 1.645];
+  const TWO_PI = 2 * Math.PI;
+  const ln = (d) => { let u1 = rnd(); if (u1 < 1e-12) u1 = 1e-12; const u2 = rnd(); return Math.exp(d[0] + d[1] * Math.sqrt(-2 * Math.log(u1)) * Math.cos(TWO_PI * u2)); };
+  const dC = mk(6, 18), dP = mk(15, 35), dI = mk(x.coldInitP50, x.coldInitP95), dE = mk(20, 65), dS = mk(45, 120), dG = mk(140, 320),
+    dT = mk(x.ttftP50, x.ttftP95), dGr = mk(280, 650), dJ = mk(450, 1100);
+  const gen1 = (x.chunkTokens / x.tps) * 1000, genAll = ((x.To - 1) / x.tps) * 1000;
+  const out = new Float64Array(draws), full = new Float64Array(draws);
+  for (let i = 0; i < draws; i++) {
+    const c = L.consent ? ln(dC) : 0;
+    let p = 0;
+    if (L.pii) { p = ln(dP); if (rnd() < L.coldRate) p += ln(dI); }
+    let pre = Math.max(c, p);
+    if (L.orch === "express") pre += ln(dE);
+    else if (L.orch === "standard") pre += ln(dS) + ln(dS) + ln(dS);
+    if (L.inGr) pre += ln(dG);
+    const ttft = ln(dT);
+    const oc = L.outSync ? ln(L.groundingLike ? dGr : dG) : 0;
+    let post = oc;
+    if (L.judgeSync) post += ln(dJ);
+    if (L.whole) { let w = ln(dP); if (rnd() < L.coldRate) w += ln(dI); post += w; }
+    full[i] = pre + ttft + genAll + post;
+    out[i] = L.broken ? full[i] : pre + ttft + (L.outSync ? gen1 + oc : 0);
+  }
+  out.sort(); full.sort();
+  const q = (a, p) => a[Math.min(a.length - 1, Math.floor(p * a.length))];
+  return { p50: q(out, 0.5), p95: q(out, 0.95), full50: q(full, 0.5), broken: L.broken, plan: L, gen1, genAll };
+}
+
+function grade(ms) {
+  const s = ms / 1000;
+  if (s < 0.8) return ["instant", "Instant"];
+  if (s < 1.8) return ["responsive", "Responsive"];
+  if (s <= 3.5) return ["drag", "Noticeable drag"];
+  return ["risk", "Abandonment risk"];
+}
+
+
+// ===== Presets and state → inputs (§4) =====
+const PRESETS = {
+  everyday: { label: "Everyday business", desc: "A general-purpose assistant with basic safety", region: "commercial",
+    dials: { question: "light", answer: "light", fairness: "off", human: "off", records: "basic" } },
+  higher: { label: "Higher education", sub: "FERPA + GLBA Safeguards", desc: "Student services and advising", region: "us_geo",
+    dials: { question: "standard", answer: "standard", fairness: "spot", human: "off", records: "standard" }, logRet: 12 },
+  lender: { label: "Lender / financial services", sub: "GLBA + ECOA/Reg B", desc: "Credit and financial guidance", region: "us_geo",
+    dials: { question: "standard", answer: "strict", fairness: "allAfter", human: "off", records: "strict" }, archiveRet: 25 },
+  health: { label: "Healthcare", sub: "HIPAA", desc: "Patient-facing or clinical support", region: "us_geo",
+    dials: { question: "strict", answer: "strict", fairness: "spot", human: "off", records: "strict" }, archiveRet: 72 },
+  federal: { label: "US federal agency", sub: "FedRAMP", desc: "Agency assistant", region: null,
+    dials: { question: "strict", answer: "strict", fairness: "spot", human: "on", records: "strict" },
+    logRet: 12, archiveRet: 12, model: "nova_pro", judge: "nova_micro", orchestration: "standard" },
+  eu: { label: "EU high-risk AI", sub: "EU AI Act", desc: "Decisions about people in the EU", region: "eu_geo",
+    dials: { question: "standard", answer: "standard", fairness: "allAfter", human: "on", records: "standard" }, logRet: 6 },
+};
+const WORK_DEFAULT = { N: 1e6, Tq: 200, Td: 1300, To: 400, month: 12 };
+
+function presetRegion(s) {
+  const p = PRESETS[s.preset];
+  return s.preset === "federal" ? (s.fedClass === "D" ? "govcloud" : "commercial") : p.region;
+}
+
+function derive(s) {
+  const p = PRESETS[s.preset], a = s.adv, d = s.dials, w = s.work;
+  const region = a.region ?? presetRegion(s);
+  const judge = a.judge ?? p.judge ?? (region === "govcloud" ? "nova_micro" : "haiku_55");
+  const rd = REC[d.records];
+  const lat = Object.assign({}, PRICING.models[w.model].latency, (a.lat || {})[w.model]);
+  const piiOut = ge("answer", d.answer, "standard");
+  let outputMode = a.outputMode ?? (d.answer === "light" ? "async" : "sync");
+  const p3 = piiOut && outputMode === "async";
+  if (p3) outputMode = "sync";
+  const orchestration = a.orchestration ?? p.orchestration ?? "none";
+  return {
+    N: w.N, Tq: w.Tq, Td: w.Td, To: w.To, month: w.month,
+    model: w.model, judge, region, ...d,
+    scopeQuestionOnly: a.scopeQuestionOnly ?? false,
+    outputMode, p3,
+    automatedReasoning: a.automatedReasoning ?? false,
+    arBlocked: !!a.automatedReasoning && region === "govcloud",
+    wholeAnswerCheck: a.wholeAnswerCheck ?? false,
+    modelInWorkflow: !!a.modelInWorkflow && orchestration !== "none",
+    sampleRate: a.sampleRate ?? 0.1, rubricTokens: a.rubricTokens ?? 500, judgeOutTokens: a.judgeOutTokens ?? 150, batchJudge: a.batchJudge ?? false,
+    orchestration, expressSeconds: a.expressSeconds ?? 1.0, standardTransitions: a.standardTransitions ?? 8,
+    traffic: a.traffic ?? "steady",
+    logClass: a.logClass ?? "standard", dataProtection: a.dataProtection ?? rd.dp, logKB: a.logKB ?? 8, compression: a.compression ?? 0.3,
+    logRetention: a.logRetention ?? (d.records === "basic" ? 1 : p.logRet ?? 12),
+    metricCount: rd.metrics, ledger: rd.ledger, pitr: rd.pitr, archive: rd.archive,
+    archiveKB: a.archiveKB ?? 4, archiveHot: a.archiveHot ?? 3, archiveRetention: a.archiveRetention ?? p.archiveRet ?? 72, s3Mode: a.s3Mode ?? "batched",
+    ttftP50: lat.ttftP50, ttftP95: lat.ttftP95, tps: lat.tps,
+    chunkTokens: a.chunkTokens ?? 50, coldInitP50: a.coldInitP50 ?? 200, coldInitP95: a.coldInitP95 ?? 450,
+    billPerChunk: a.billPerChunk ?? false,
+    showPeople: a.showPeople ?? true, reviewerMinutes: a.reviewerMinutes ?? 3, reviewerHourly: a.reviewerHourly ?? 40,
+  };
+}
+
+function presetState(key, fedClass = "D") {
+  const p = PRESETS[key];
+  return { preset: key, fedClass, dials: { ...p.dials }, work: { ...WORK_DEFAULT, model: p.model || "haiku_55" }, adv: {}, custom: false };
+}
+
+
+// ===== UI =====
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const MODELS = PRICING.models, REG = PRICING.regions;
+const CATL = Object.fromEntries(CATS);
+const fmt$ = (v) => {
+  const s = v < 0 ? "-" : "", a = Math.abs(v);
+  if (a >= 1000) { const p = Math.pow(10, Math.floor(Math.log10(a)) - 2); return s + "$" + (Math.round(a / p) * p).toLocaleString("en-US"); }
+  if (a >= 10) return s + "$" + Math.round(a).toLocaleString("en-US");
+  return s + "$" + a.toFixed(2);
+};
+const fmt$2 = (v) => (v < 0 ? "-" : "") + "$" + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const sec = (ms) => (ms / 1000).toFixed(1) + " s";
+const sec2 = (ms) => (ms / 1000).toFixed(2) + " s";
+const pct0 = (f) => Math.round(f * 100) + "%";
+const pct1 = (f) => (f * 100).toFixed(1) + "%";
+const nShort = (n) => n >= 1e6 ? +(n / 1e6).toFixed(1) + "M" : n >= 1e3 ? +(n / 1e3).toFixed(1) + "K" : String(n);
+const months = (m) => m === 1 ? "30 days" : m + " months";
+
+const LEVEL = {
+  question: { off: "Off", light: "Light", standard: "Standard", strict: "Strict" },
+  answer: { off: "Off", light: "Light", standard: "Standard", strict: "Strict" },
+  fairness: { off: "Off", spot: "Spot-check", allAfter: "Every answer, afterward", allBefore: "Every answer, before the user sees it" },
+  human: { off: "Off", on: "On" },
+  records: { basic: "Basic", standard: "Standard", strict: "Strict" },
+};
+const SHORT = { question: "Question", answer: "Answer", fairness: "Fairness", human: "Human", records: "Records" };
+const DIALS = [
+  { k: "question", name: "Screen the question", off: "off", o: [
+    ["off", "Off", "No checks before the AI sees the question", "Nothing added."],
+    ["light", "Light", "Basic harmful-content filter", "Bedrock Guardrails content filter (input)."],
+    ["standard", "Standard", "Harmful content, banned topics, personal info removed", "Guardrails content + denied topics + ML PII filter (input); Lambda PII scrub (512 MB, 15 ms); 300 policy-instruction tokens added to every prompt."],
+    ["strict", "Strict", "Standard + check the user's role or consent first", "Standard + DynamoDB consent/role lookup (runs in parallel with the PII scrub); 600 policy tokens instead of 300."]] },
+  { k: "answer", name: "Check the answer", off: "off", o: [
+    ["off", "Off", "Answers go straight to the user", "Nothing added."],
+    ["light", "Light", "Harmful-content check runs alongside, without slowing the answer", "Guardrails content filter (output), asynchronous streaming mode."],
+    ["standard", "Standard", "Harmful content, banned topics and personal info checked as the answer streams", "Guardrails content + denied topics + ML PII (output), synchronous streaming mode (checks chunks)."],
+    ["strict", "Strict", "Standard + check the answer against the source documents", "Standard + contextual grounding check."]] },
+  { k: "fairness", name: "Fairness review", off: "off", o: [
+    ["off", "Off", "No bias review", "Nothing added."],
+    ["spot", "Spot-check", "A second AI reviews 10% of answers afterward", "LLM-as-judge, 10% sampled, after the answer is sent."],
+    ["allAfter", "Every answer, after", "Reviews all answers after they are sent", "LLM-as-judge, 100%, asynchronous."],
+    ["allBefore", "Every answer, before", "Users wait for the review before they see the answer", "LLM-as-judge, 100%, synchronous. Breaks streaming."]] },
+  { k: "human", name: "Human review", off: "off", o: [
+    ["off", "Off", "No people in the loop", "Nothing added."],
+    ["on", "On", "2% of answers are flagged for a person to approve", "Step Functions Standard workflow (6 transitions per escalation) + DynamoDB queue writes."]] },
+  { k: "records", name: "Records and audit trail", off: "basic", o: [
+    ["basic", "Basic", "Short-term logs (30 days)", "CloudWatch Logs Standard, 8 KB per request, 30-day retention."],
+    ["standard", "Standard", "1 year of logs with personal info masked, plus a decision ledger", "CloudWatch with data protection, 12-month retention, 10 custom metrics; DynamoDB decision ledger (1 KB write per request, 12-month TTL)."],
+    ["strict", "Strict", "Standard + tamper-proof archive", "Standard + S3 Object Lock archive (4 KB record per request, Firehose-batched, 3 months in S3 Standard then Glacier Deep Archive) + DynamoDB point-in-time recovery + 20 custom metrics."]] },
+];
+const WORK = [
+  { k: "N", name: "Questions per month", o: [[1e4, "10K"], [1e5, "100K"], [1e6, "1M"], [1e7, "10M"], [5e7, "50M"]] },
+  { k: "model", name: "AI model tier", o: Object.entries(MODELS).map(([k, m]) => [k, m.tier]) },
+  { k: "To", name: "Answer length", tip: true, o: [[150, "Short"], [400, "Medium"], [1200, "Long"]] },
+  { k: "Td", name: "Reference documents attached to each question", tip: true, o: [[0, "None"], [1300, "Some"], [6000, "Lots"]] },
+];
+const ICONS = {
+  everyday: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="24" height="16" rx="2"/><path d="M12 10V7h8v3M4 17h24"/></svg>',
+  higher: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12l14-6 14 6-14 6z"/><path d="M8 15v6c4 3 12 3 16 0v-6M28 13v8"/></svg>',
+  lender: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12L16 5l12 7z"/><path d="M7 14v9M13 14v9M19 14v9M25 14v9M4 26h24"/></svg>',
+  health: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="24" height="24" rx="5"/><path d="M16 10v12M10 16h12"/></svg>',
+  federal: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 15a8 7 0 0 1 16 0zM16 5v3M6 15h20M8 15v9M13 15v9M19 15v9M24 15v9M4 27h24"/></svg>',
+  eu: '<svg viewBox="0 0 32 32" fill="currentColor">' + Array.from({ length: 12 }, (_, i) => { const a = (i * Math.PI) / 6; return `<circle cx="${(16 + 10 * Math.sin(a)).toFixed(2)}" cy="${(16 - 10 * Math.cos(a)).toFixed(2)}" r="1.8"/>`; }).join("") + "</svg>",
+};
+const ATYPE = { rule: ["⚖️", "Required by rule"], platform: ["⚙️", "Platform limit"], exp: ["⏱️", "Experience"], cost: ["💰", "Cost tip"], practice: ["🧭", "Common practice"] };
+const AORDER = ["rule", "platform", "exp", "cost", "practice"];
+const SAMPLE_Q = "How do I update my mailing address?";
+const SAMPLE_A = "You can update your mailing address online in a few minutes. Sign in to your account portal, open Profile, and choose Contact information. Enter the new address, confirm it, and select Save. You'll receive a confirmation email shortly. If the change affects billing or official documents, it can take one business day to appear everywhere. If you can't sign in, contact the help desk and have a photo ID ready so they can verify your identity before making the change.";
+
+let S = presetState("everyday", "D");
+const UI = { pinned: null, adviceAll: false, R: null, weDone: false };
+
+// ---------- controls ----------
+function renderControls() {
+  $("presets").innerHTML = Object.entries(PRESETS).map(([k, p]) => `<label class="pcard"><input type="radio" name="preset" value="${k}"><span class="pico" aria-hidden="true">${ICONS[k]}</span><span class="pname">${esc(p.label)}</span>${p.sub ? `<span class="psub">${esc(p.sub)}</span>` : ""}<span class="pdesc">${esc(p.desc)}</span></label>`).join("");
+  const tokTip = `<details class="tip"><summary aria-label="What is a token?">ⓘ</summary><div class="tipbody">A token is roughly ¾ of a word. AI services bill by the token. The question itself is fixed at 200 tokens (editable in Advanced).</div></details>`;
+  $("work").innerHTML = WORK.map((g) => `<div class="grp" role="radiogroup" aria-labelledby="wl-${g.k}"><div class="ghead"><span class="gname" id="wl-${g.k}">${esc(g.name)}</span>${g.tip ? tokTip : ""}</div><div class="seg">${g.o.map(([v, l]) => `<label><input type="radio" name="w-${g.k}" value="${v}"><span>${esc(l)}</span></label>`).join("")}</div>${g.k === "model" ? '<p class="note" id="modelNote" style="margin:6px 0 0"></p>' : g.k === "Td" || g.k === "To" ? `<p class="note" id="note-${g.k}" style="margin:6px 0 0"></p>` : ""}</div>`).join("");
+  $("dials").innerHTML = DIALS.map((d) => `<div class="dial" role="radiogroup" aria-labelledby="dl-${d.k}"><div class="ghead"><span style="display:flex;align-items:center;gap:4px"><span class="gname" id="dl-${d.k}">${esc(d.name)}</span><details class="tip"><summary aria-label="What ${esc(d.name)} turns on">ⓘ</summary><div class="tipbody"><ul>${d.o.map(([v, l, , aws]) => `<li data-v="${v}"><b>${esc(l)}:</b> ${esc(aws)}</li>`).join("")}</ul></div></details></span><span class="dprev" id="prev-${d.k}"></span></div><div class="seg">${d.o.map(([v, l]) => `<label><input type="radio" name="d-${d.k}" value="${v}"><span>${esc(l)}</span></label>`).join("")}</div><p class="dexp" id="exp-${d.k}"></p></div>`).join("");
+}
+function setRadio(name, val) { for (const el of document.getElementsByName(name)) el.checked = String(el.value) === String(val); }
+function syncControls(R) {
+  setRadio("preset", S.preset); setRadio("fedClass", S.fedClass);
+  $("fed").hidden = S.preset !== "federal";
+  $("customBadge").hidden = $("resetBtn").hidden = !S.custom;
+  for (const g of WORK) setRadio("w-" + g.k, S.work[g.k]);
+  const m = MODELS[S.work.model];
+  $("modelNote").textContent = `${m.name} · $${pr(m.in)} in / $${pr(m.out)} out per million tokens`;
+  $("note-To").textContent = `${S.work.To.toLocaleString("en-US")} tokens per answer`;
+  $("note-Td").textContent = `${S.work.Td.toLocaleString("en-US")} document tokens per question (RAG)`;
+  for (const d of DIALS) {
+    const v = S.dials[d.k];
+    setRadio("d-" + d.k, v);
+    $("exp-" + d.k).textContent = d.o.find((o) => o[0] === v)[2];
+    for (const li of document.querySelectorAll(`#dials [aria-labelledby="dl-${d.k}"] li`)) li.className = li.dataset.v === v ? "cur" : "";
+    const p = R.prev[d.k], el = $("prev-" + d.k);
+    if (!p) { el.textContent = d.k === "records" ? "Baseline level" : "Adds nothing"; el.className = "dprev zero"; continue; }
+    const dt = p.dt / 1000;
+    el.textContent = `${p.dc >= 0 ? "+" : "−"}${fmt$(Math.abs(p.dc))}/mo · ${Math.abs(dt) < 0.05 ? "no added wait" : (dt > 0 ? "+" : "−") + Math.abs(dt).toFixed(1) + " s"}`;
+    el.className = "dprev";
+  }
+}
+
+// ---------- compute ----------
+function computeAll() {
+  const x = derive(S), K = kpis(x), L = calcLatency(x), xb = baselineOf(x), B = calcLatency(xb);
+  const prev = {};
+  for (const d of DIALS) {
+    if (S.dials[d.k] === d.off) { prev[d.k] = null; continue; }
+    const x2 = derive({ ...S, dials: { ...S.dials, [d.k]: d.off } });
+    prev[d.k] = { dc: K.total - calcCost(x2).total, dt: L.p50 - calcLatency(x2).p50 };
+  }
+  return { x, K, L, B, xb, prev };
+}
+
+// ---------- results ----------
+function ctxLine(x) { return `${PRESETS[S.preset].label}${S.preset === "federal" ? ` (Class ${S.fedClass})` : ""}${S.custom ? " · Custom" : ""} · ${MODELS[x.model].name} · ${nShort(x.N)} questions/month · ${REG[x.region].label}`; }
+function renderResults(R) {
+  const { x, K, L, B } = R, g = grade(L.p50);
+  $("ctx").textContent = ctxLine(x);
+  $("hero").innerHTML = `Governance adds <b class="g">${fmt$(K.adds)}/month</b> (<b class="g">${pct0(K.share)}</b> of this bill). The first word appears after <b>${sec(L.p50)}</b> (vs <b>${sec(B.p50)}</b> with no governance).`;
+  const ill = '<span class="ill" title="Illustrative, not a quote">≈ illustrative</span>';
+  $("kpis").innerHTML = [
+    ["Monthly total", fmt$(K.total), `${ill}vs ${fmt$(K.base)} with no governance`, ""],
+    ["Cost per 1,000 questions", fmt$(K.per1000), `${ill}vs ${fmt$((K.base / x.N) * 1000)} with no governance`, ""],
+    ["Governance share of bill", pct0(K.share), `Bill is ${K.mult.toFixed(1)}× the no-governance bill`, ""],
+    ["Wait for first word", sec(L.p50), `p95 ${sec(L.p95)} · ${L.broken ? "streaming broken" : "streams"} <span class="chip g-${g[0]}">${g[1]}</span>`, ""],
+  ].map(([l, v, s, t]) => `<div class="kpi"><div class="kl"><span>${l}</span>${t}</div><div class="kv">${v}</div><div class="ks">${s}</div></div>`).join("");
+  $("people").innerHTML = K.c.people && x.showPeople ? `<b>Not in the cloud bill:</b> people reviewing ${Math.round(x.N * 0.02).toLocaleString("en-US")} flagged answers a month ≈ <b>${fmt$(K.c.people)}/mo</b> (${x.reviewerMinutes} min each at $${x.reviewerHourly}/h).` : "";
+  const max = Math.max(K.total, K.base) || 1;
+  const bar = (label, cats, total) => `<div class="brow"><div class="blab"><span>${label}</span><b>${fmt$(total)}/mo</b></div><div class="btrack" role="img" aria-label="${esc(label + ": " + CATS.filter(([k]) => cats[k] > 0.005).map(([k, l]) => `${l} ${fmt$(cats[k])}`).join(", "))}">${CATS.map(([k, l]) => { const v = cats[k]; if (v <= 0.005) return ""; const w = (v / max) * 100; return `<span class="s-${k}" style="width:${w.toFixed(3)}%" title="${esc(l)}: ${fmt$(v)}">${w >= 15 ? fmt$(v) : ""}</span>`; }).join("")}</div></div>`;
+  $("cmp").innerHTML = bar("No governance", K.b.cats, K.base) + bar("Your setup", K.c.cats, K.total) +
+    `<div class="legend">${CATS.map(([k, l]) => `<div><i class="s-${k}"></i><span>${esc(l)}</span><b>${fmt$(K.c.cats[k])}</b></div>`).join("")}</div>`;
+  renderPin(R);
+  $("mbar").innerHTML = `<span><b>${fmt$(K.total)}</b>/mo · <b>${pct0(K.share)}</b> governance</span><span>First word <b>${sec(L.p50)}</b> · ${g[1]}</span>`;
+}
+function snapshot(R) { const g = grade(R.L.p50); return { label: ctxLine(R.x), total: R.K.total, share: R.K.share, mult: R.K.mult, p50: R.L.p50, p95: R.L.p95, grade: g[1] }; }
+function renderPin(R) {
+  $("pinBtn").textContent = UI.pinned ? "Re-pin current setup" : "Pin this setup";
+  if (!UI.pinned) { $("pinCmp").innerHTML = ""; return; }
+  const p = UI.pinned, c = snapshot(R);
+  const rows = [["Monthly total", fmt$(p.total), fmt$(c.total)], ["Governance share", pct0(p.share), pct0(c.share)], ["Bill vs no governance", p.mult.toFixed(1) + "×", c.mult.toFixed(1) + "×"],
+    ["First word (p50 / p95)", `${sec(p.p50)} / ${sec(p.p95)}`, `${sec(c.p50)} / ${sec(c.p95)}`], ["Experience", p.grade, c.grade]];
+  $("pinCmp").innerHTML = `<table class="pint"><thead><tr><th></th><th class="n">Pinned</th><th class="n">Current</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")}</tbody></table><p class="note" style="margin:6px 0 0">Pinned: ${esc(p.label)} · <button type="button" class="linkbtn" id="unpin">Unpin</button></p>`;
+}
+
+// ---------- advisories (§8) ----------
+function advisories(R) {
+  const { x, K, L, B } = R, A = [], p = S.preset;
+  const add = (t, msg, src) => A.push({ t, msg, src });
+  const recordsN = Math.max(x.logRetention, x.archive ? x.archiveRetention : 0);
+  if (p === "higher" || p === "lender") {
+    let m = "GLBA Safeguards Rule: dispose of customer information within 2 years of its last use unless another law or a real business need requires keeping it.";
+    if (recordsN > 24) m += ` You're keeping records ${recordsN} months, so document why.`;
+    m += p === "higher" ? " This applies to colleges that take part in federal student aid programs." : " Reg B's 25-month rule is one such reason. Banks follow the banking agencies' Interagency Guidelines instead of the FTC rule.";
+    add("rule", m, "16 CFR 314.4(c)(6)");
+  }
+  if (p === "lender" && (x.records !== "strict" || x.archiveRetention < 25)) add("rule", "ECOA / Regulation B: keep consumer credit application records for 25 months after notifying the applicant of the decision.", "12 CFR 1002.12(b)");
+  if (p === "lender" && x.records === "strict") add("practice", "Write-once (WORM) storage is a broker-dealer rule (SEC 17a-4), which has allowed an audit-trail alternative since 2022. For lenders, an immutable archive is common practice, not a GLBA requirement.", "SEC Rule 17a-4 (2022 amendments)");
+  if (p === "higher" && x.question === "strict") add("practice", "Parental consent is a K–12 pattern. In higher ed, FERPA rights belong to the student, and vendors usually receive records under the 'school official' exception. Treat this lookup as a role check.", "34 CFR 99.5, 99.31(a)(1)");
+  if (p === "higher") add("practice", "FERPA sets no general retention period. Follow your institution's records schedule. (FERPA does require keeping a record of disclosures as long as the education record exists.)", "34 CFR 99.32");
+  if (p === "health" && x.records === "basic") add("rule", "HIPAA's audit controls standard requires recording and examining activity in systems that hold electronic health information.", "45 CFR 164.312(b)");
+  if (p === "health" && x.archive && x.archiveRetention === 72) add("practice", "HIPAA's 6-year retention applies to required documentation. Applying it to AI audit logs is a common interpretation, not an explicit rule.", "45 CFR 164.316(b)(2)");
+  if (p === "federal" && x.logRetention < 12) add("rule", "OMB M-26-14 (May 2026): agencies keep logs actively searchable for at least 6 months and retrievable for at least 12 months. Your agency may require more.", "OMB M-26-14");
+  if (p === "federal" && S.fedClass === "D" && x.region !== "govcloud") add("practice", "Class D (formerly High) workloads typically run in GovCloud. AWS's US East/West regions are certified at Class C (formerly Moderate). FedRAMP says the classes aren't one-for-one replacements for impact levels.", "FedRAMP Certification Classes");
+  if (p === "eu" && x.logRetention < 6) add("rule", "EU AI Act: providers and deployers of high-risk systems keep automatically generated logs for at least six months.", "AI Act Arts. 19, 26(6)");
+  if (p === "eu" && x.human === "off") add("rule", "EU AI Act Article 14: high-risk systems must be designed for effective human oversight. The 2% escalation rate is a design choice, not a number from the Act.", "AI Act Art. 14");
+  if (p === "eu") add("rule", "Timing: under the Digital Omnibus (in force 27 July 2026), obligations for stand-alone (Annex III) high-risk systems apply from 2 December 2027.", "Regulation (EU) 2026/1744");
+  if (p === "eu" && x.records === "strict") add("practice", "Keeping personal data in tamper-proof storage for years can conflict with GDPR erasure rights. Keep only what you need, for as long as you need it.", "GDPR Art. 17");
+  if (x.arBlocked) add("platform", "Automated Reasoning checks aren't listed as available in AWS GovCloud (US). This control is switched off and not billed.", "AWS availability announcements");
+  if (x.region === "govcloud" && (x.model === "haiku_55" || x.judge === "haiku_55")) add("platform", "Claude Haiku 5.5's availability in GovCloud is unconfirmed. The fairness judge defaults to Amazon Nova Micro here.", "Bedrock GovCloud model list");
+  if (x.p3) add("platform", "Asynchronous output mode can't mask personal information, so the PII output filter stays synchronous.", "Bedrock Guardrails streaming docs");
+  if (L.broken) add("exp", `Users see nothing until the whole answer is written and checked: about ${sec(L.p50)} before the first word, vs ${sec(B.p50)} with no governance. Running the fairness review afterward keeps streaming.`, "Model in this demo (latency section)");
+  if (x.traffic === "bursty" && K.c.fns.length) add("exp", `Bursty traffic means more cold starts: a slower tail, and Lambda now bills cold-start time. Keeping 10 instances warm costs about ${fmt$(10 * 0.5 * 2628000 * 0.0000033334 * REG[x.region].lambda)}/mo per function.`, "Lambda INIT billing (Aug 2025)");
+  if (x.question !== "off" && x.Td > 0 && !x.scopeQuestionOnly) {
+    const alt = kpis({ ...x, scopeQuestionOnly: true }), save = K.total - alt.total;
+    add("cost", `Your input filters re-scan ${x.Td.toLocaleString("en-US")} tokens of attached documents on every question. Screening only the question would save about ${fmt$(save)}/mo (${pct0(save / K.total)} of this bill). The grounding check still reads the documents.`, "Computed live");
+  }
+  const archCost = (mode) => calcCost({ ...x, s3Mode: mode }).lines.filter((l) => ["s3Req", "s3Hot", "s3Cold", "firehose"].includes(l.key)).reduce((a, l) => a + l.regional, 0);
+  if (x.archive && x.s3Mode === "override") add("cost", `Forcing ${x.archiveKB} KB audit records into Deep Archive one at a time costs ${fmt$(archCost("override"))}/mo at month ${x.month}. Firehose batching costs ${fmt$(archCost("batched"))}.`, "Computed live");
+  if (x.archive && x.s3Mode === "default") add("cost", `S3 skips lifecycle transitions for objects under 128 KB by default, so per-question records stay in S3 Standard (${fmt$(archCost("default"))}/mo at month ${x.month}). Batching brings this to ${fmt$(archCost("batched"))}.`, "Computed live");
+  if (x.orchestration === "standard") {
+    const a = K.c.lines.filter((l) => l.key === "sfStandard").reduce((s, l) => s + l.regional, 0);
+    const b = a + calcCost({ ...x, orchestration: "express" }).total - K.total;
+    add("cost", `Step Functions Standard costs ${fmt$(a)}/mo here. Express would be about ${fmt$(b)}. You only need Standard for long waits like human approval.`, "Computed live");
+  }
+  if (x.logClass === "ia" && x.dataProtection) add("cost", "Data protection is billed per GB on both log classes. Infrequent Access only saves on ingestion.", "CloudWatch pricing");
+  if (["higher", "lender", "health", "eu"].includes(p) && x.fairness === "off") add("practice", "No fairness review is set up. It isn't always mandated, but reviewers expect evidence of bias testing when AI informs decisions about people.", "");
+  return A.sort((a, b) => AORDER.indexOf(a.t) - AORDER.indexOf(b.t));
+}
+function renderAdvisories(R) {
+  const A = advisories(R);
+  $("advList").innerHTML = A.length ? A.map((a, i) => `<div class="adv${i >= 4 && !UI.adviceAll ? " hide" : ""}"><span class="at at-${a.t}"><span aria-hidden="true">${ATYPE[a.t][0]}</span>${ATYPE[a.t][1]}</span><p>${esc(a.msg)}</p>${a.src ? `<p class="src">Source: ${esc(a.src)}</p>` : ""}</div>`).join("") : '<p class="note">No notes for this setup.</p>';
+  const b = $("advAll");
+  b.hidden = A.length <= 4;
+  b.textContent = UI.adviceAll ? "Show fewer" : `Show all (${A.length})`;
+}
+
+// ---------- latency waterfall (§7.5) ----------
+function wfRows(x) {
+  const L = latencyPlan(x), rows = [];
+  let t = 0;
+  if (L.consent || L.pii) {
+    const segs = [];
+    if (L.consent) segs.push({ label: "Checking permissions", p50: 6, p95: 18 });
+    if (L.pii) segs.push({ label: "Removing personal info", p50: 15, p95: 35 });
+    rows.push({ label: segs.length > 1 ? "Permissions ∥ personal info" : segs[0].label, short: segs.length > 1 ? "Permissions ∥ personal info" : segs[0].label, start: 0, segs, p50: Math.max(...segs.map((s) => s.p50)), p95: Math.max(...segs.map((s) => s.p95)), kind: "par" });
+    if (L.pii && L.coldRate > 0) rows.push({ label: `Cold start (${Math.round(L.coldRate * 100)}% of requests)`, short: "Cold start (sometimes)", start: 15, p50: x.coldInitP50, p95: x.coldInitP95, kind: "cold" });
+    t = Math.max(...segs.map((s) => s.p50));
+  }
+  if (L.orch === "express") { rows.push({ label: "Workflow overhead (Express)", short: "Workflow overhead", start: t, p50: 20, p95: 65 }); t += 20; }
+  if (L.orch === "standard") { rows.push({ label: "Workflow overhead (Standard, 3 steps)", short: "Workflow overhead", start: t, p50: 135, p95: 360 }); t += 135; }
+  if (L.inGr) { rows.push({ label: "Screening the question", short: "Screening the question", start: t, p50: 140, p95: 320 }); t += 140; }
+  rows.push({ label: "Model starts answering", short: "Model starts", start: t, p50: x.ttftP50, p95: x.ttftP95 }); t += x.ttftP50;
+  const breakAt = t, oc = L.groundingLike ? [280, 650] : [140, 320], ocl = L.groundingLike ? "Checking against sources" : "Checking the answer";
+  const gen1 = (x.chunkTokens / x.tps) * 1000, genAll = ((x.To - 1) / x.tps) * 1000;
+  if (!L.broken) {
+    if (L.outSync) {
+      rows.push({ label: `Writing first chunk (${x.chunkTokens} tokens)`, short: "First chunk", start: t, p50: gen1, p95: gen1, kind: "gen" }); t += gen1;
+      rows.push({ label: ocl, short: ocl, start: t, p50: oc[0], p95: oc[1] }); t += oc[0];
+    }
+  } else {
+    rows.push({ label: "Writing full answer (hidden)", short: "Writing answer (hidden)", start: t, p50: genAll, p95: genAll, kind: "hidden" }); t += genAll;
+    if (L.outSync) { rows.push({ label: ocl, short: ocl, start: t, p50: oc[0], p95: oc[1] }); t += oc[0]; }
+    if (L.judgeSync) { rows.push({ label: "Fairness review before release", short: "Fairness review", start: t, p50: 450, p95: 1100 }); t += 450; }
+    if (L.whole) { rows.push({ label: "Whole-answer custom check", short: "Whole-answer check", start: t, p50: 15, p95: 35 }); t += 15; }
+  }
+  return { rows, first: t, breakAt, broken: L.broken, ghost: { label: "No governance: model starts", short: "No governance", start: 0, p50: x.ttftP50, p95: x.ttftP95, kind: "ghost" } };
+}
+function niceStep(max, target) { const raw = max / target, p = Math.pow(10, Math.floor(Math.log10(raw))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= raw) return m * p; return 10 * p; }
+function drawWF() {
+  const svg = $("wf"), R = UI.R; if (!R) return;
+  const W = svg.clientWidth; if (!W) return;
+  const D = wfRows(R.x), all = [D.ghost, ...D.rows], narrow = W < 560;
+  const labelW = narrow ? 0 : Math.min(270, W * 0.4), rowH = narrow ? 44 : 30, top = 40, bot = 30;
+  const H = top + all.length * rowH + bot;
+  $("wfFig").style.minHeight = H + "px";
+  const xmax = Math.max(...all.map((r) => r.start + r.p95), D.first) * 1.04;
+  const X = (t) => labelW + 8 + (t / xmax) * (W - labelW - 20);
+  const step = niceStep(xmax / 1000, narrow ? 4 : 7);
+  let s = '<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--panel)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--brick)" stroke-width="2" opacity=".25"/></pattern></defs>';
+  for (let v = 0; v <= xmax / 1000 + 1e-9; v += step) {
+    const xx = X(v * 1000);
+    s += `<line x1="${xx}" x2="${xx}" y1="${top - 6}" y2="${H - bot}" stroke="var(--line)"/><text x="${xx}" y="${H - bot + 18}" text-anchor="middle" class="mut">${+v.toFixed(2)} s</text>`;
+  }
+  if (D.broken) s += `<rect x="${X(D.breakAt)}" y="${top - 6}" width="${X(D.first) - X(D.breakAt)}" height="${H - bot - top + 6}" fill="url(#hatch)"/>`;
+  all.forEach((r, i) => {
+    const y0 = top + i * rowH, by = narrow ? y0 + 20 : y0 + 8, bh = 14;
+    const lbl = narrow ? r.short : r.label;
+    const tx = X(r.start), far = tx > W - 170;
+    s += narrow ? `<text x="${far ? Math.min(W - 4, X(r.start + r.p50)) : tx}" y="${y0 + 13}" text-anchor="${far ? "end" : "start"}" ${r.kind === "ghost" ? 'class="mut"' : ""}>${esc(lbl)}</text>` : `<text x="${labelW}" y="${by + 11}" text-anchor="end" ${r.kind === "ghost" ? 'class="mut"' : ""}>${esc(lbl)}</text>`;
+    if (r.kind === "par") {
+      r.segs.forEach((g, j) => { const h = bh / r.segs.length - 1, yy = by + j * (h + 2); s += `<rect x="${X(0)}" y="${yy}" width="${Math.max(2, X(g.p50) - X(0))}" height="${h}" fill="var(--c-workflow)"/><line x1="${X(g.p50)}" x2="${X(g.p95)}" y1="${yy + h / 2}" y2="${yy + h / 2}" stroke="var(--ink)"/>`; });
+      return;
+    }
+    const fill = r.kind === "ghost" ? "none" : r.kind === "cold" ? "none" : r.kind === "hidden" ? "var(--c-premium)" : r.kind === "gen" ? "var(--c-ai)" : "var(--c-safety)";
+    const stroke = r.kind === "ghost" ? 'stroke="var(--muted)" stroke-dasharray="4 3"' : r.kind === "cold" ? 'stroke="var(--c-workflow)" stroke-dasharray="3 2"' : "";
+    const mfill = r.label.startsWith("Model starts") ? "var(--c-ai)" : fill;
+    s += `<rect x="${X(r.start)}" y="${by}" width="${Math.max(2, X(r.start + r.p50) - X(r.start))}" height="${bh}" fill="${mfill}" ${stroke} rx="2"/>`;
+    if (r.p95 > r.p50) s += `<line x1="${X(r.start + r.p50)}" x2="${X(r.start + r.p95)}" y1="${by + bh / 2}" y2="${by + bh / 2}" stroke="var(--ink)"/><line x1="${X(r.start + r.p95)}" x2="${X(r.start + r.p95)}" y1="${by + 3}" y2="${by + bh - 3}" stroke="var(--ink)"/>`;
+  });
+  const fx = X(D.first), lab1 = D.broken ? "Answer released" : "First word";
+  s += `<line x1="${fx}" x2="${fx}" y1="${top - 6}" y2="${H - bot}" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 3"/><text x="${fx > W - 120 ? fx - 4 : fx + 4}" y="${top - 12}" text-anchor="${fx > W - 120 ? "end" : "start"}" font-weight="700">${lab1}</text>`;
+  if (D.broken) { const bx = X(D.breakAt); s += `<line x1="${bx}" x2="${bx}" y1="${top - 30}" y2="${H - bot}" stroke="var(--brick)" stroke-width="2.5"/><text x="${bx + 4}" y="${top - 26}" font-weight="700" style="fill:var(--brick)">Streaming breakpoint</text>`; }
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.innerHTML = s;
+}
+function renderLatency(R) {
+  const { L, B, x } = R, g = grade(L.p50);
+  $("wfCap").innerHTML = `Simulated first word: <b>${sec2(L.p50)}</b> typical, <b>${sec2(L.p95)}</b> on a slow day (vs ${sec2(B.p50)} / ${sec2(B.p95)} with no governance). <span class="chip g-${g[0]}">${g[1]}</span>` +
+    (L.broken ? ` <b style="color:var(--brick)">Streaming breakpoint: answer held back until fully written and checked.</b>` : ` Streaming kept: the rest of the answer flows at ${x.tps} tokens/s.`);
+  drawWF();
+}
+
+// ---------- feel the latency (§7.6) ----------
+const feel = { tok: 0, skip: false };
+function feelPlan(x, bad) {
+  const v = (a, b) => (bad ? b : a), L = latencyPlan(x), st = [];
+  let t = 0;
+  const push = (label, ms, extra = {}) => { st.push({ label, start: t, end: t + ms, ...extra }); t += ms; };
+  if (L.consent || L.pii) {
+    const parts = []; if (L.consent) parts.push([v(6, 18), "Checking permissions"]); if (L.pii) parts.push([v(15, 35), "Removing personal info"]);
+    push(parts.map(([ms, l]) => `[${ms} ms] ${l}`).join(" ∥ "), Math.max(...parts.map((p) => p[0])));
+  }
+  if (L.orch === "express") push(`[${v(20, 65)} ms] Workflow overhead`, v(20, 65));
+  if (L.orch === "standard") push(`[${3 * v(45, 120)} ms] Workflow overhead (3 steps)`, 3 * v(45, 120));
+  if (L.inGr) push(`[${v(140, 320)} ms] Screening the question`, v(140, 320));
+  const ttft = v(x.ttftP50, x.ttftP95);
+  push(`[${ttft} ms] Model starts`, ttft);
+  const oc = L.groundingLike ? v(280, 650) : v(140, 320), gen1 = Math.round((x.chunkTokens / x.tps) * 1000), genAll = ((x.To - 1) / x.tps) * 1000, dur = (x.To / x.tps) * 1000;
+  if (!L.broken) {
+    if (L.outSync) push(`[${gen1} ms + ${oc} ms] Checking first chunk…`, gen1 + oc);
+    const first = t; push("Streaming", L.outSync ? ((x.To - x.chunkTokens) / x.tps) * 1000 : dur);
+    return { st, first, end: t, broken: false, chunkFrac: L.outSync ? Math.min(1, x.chunkTokens / x.To) : 0, streamStart: first, streamDur: L.outSync ? ((x.To - x.chunkTokens) / x.tps) * 1000 : dur };
+  }
+  push(`Writing full answer (hidden)… ${(genAll / 1000).toFixed(1)} s`, genAll, { prog: true });
+  if (L.outSync) push(`${L.groundingLike ? "Checking against sources" : "Checking the answer"} ${(oc / 1000).toFixed(2)} s`, oc);
+  if (L.judgeSync) push(`Fairness review ${(v(450, 1100) / 1000).toFixed(2)} s`, v(450, 1100));
+  if (L.whole) push(`[${v(15, 35)} ms] Whole-answer check`, v(15, 35));
+  const first = t; st.push({ label: "Answer released", start: t, end: t });
+  return { st, first, end: t, broken: true };
+}
+const WORDS = SAMPLE_A.split(" ");
+function reveal(frac) { const n = Math.ceil(Math.max(0, Math.min(1, frac)) * WORDS.length); return WORDS.slice(0, n).join(" "); }
+function feelInit() {
+  feel.tok++;
+  $("qL").textContent = $("qR").textContent = SAMPLE_Q;
+  $("aL").textContent = $("aR").textContent = ""; $("clkL").textContent = $("clkR").textContent = "";
+  const R = UI.R; if (!R) return;
+  const bad = document.querySelector('input[name="feelDay"]:checked').value === "p95";
+  const P = feelPlan(R.x, bad);
+  $("stepsR").innerHTML = P.st.map((s) => `<li>${esc(s.label)}${s.prog ? '<div class="prog"><i></i></div>' : ""}</li>`).join("");
+}
+function feelRun() {
+  const R = UI.R; if (!R) return;
+  const bad = document.querySelector('input[name="feelDay"]:checked').value === "p95";
+  feelInit();
+  const tok = feel.tok, x = R.x, P = feelPlan(x, bad);
+  const lFirst = bad ? x.ttftP95 : x.ttftP50, lDur = (x.To / x.tps) * 1000;
+  const lis = $("stepsR").children, t0 = performance.now(); feel.skip = false;
+  const endAll = Math.max(P.end, lFirst + lDur);
+  const frame = () => {
+    if (tok !== feel.tok) return;
+    const t = feel.skip ? endAll : performance.now() - t0;
+    $("aL").textContent = t >= lFirst ? reveal((t - lFirst) / lDur) : "";
+    $("clkL").textContent = t < lFirst ? `waiting ${sec(t)}` : `first word at ${sec(lFirst)}`;
+    P.st.forEach((s, i) => { const li = lis[i]; li.className = t >= s.end && s.end > s.start ? "done" : t >= s.start ? "on" : ""; const pg = li.querySelector(".prog i"); if (pg) pg.style.width = Math.max(0, Math.min(1, (t - s.start) / (s.end - s.start))) * 100 + "%"; });
+    if (P.broken) $("aR").textContent = t >= P.first ? SAMPLE_A : "";
+    else $("aR").textContent = t >= P.first ? (P.chunkFrac && t < P.streamStart + 1 ? reveal(P.chunkFrac) : reveal(P.chunkFrac + (1 - P.chunkFrac) * ((t - P.streamStart) / P.streamDur))) : "";
+    $("clkR").textContent = t < P.first ? `waiting ${sec(t)}` : `${P.broken ? "answer released" : "first word"} at ${sec(P.first)}`;
+    if (t < endAll) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+}
+
+// ---------- show the math (§9) ----------
+function renderMath(R) {
+  const { x, K, L, B } = R, c = K.c, reg = REG[x.region];
+  const SVC = { claude: "Claude", nova: "Nova", guardrails: "Guardrails", lambda: "Lambda", stepFunctions: "Step Functions", cloudwatch: "CloudWatch", dynamodb: "DynamoDB", s3Standard: "S3 Standard", s3DeepArchive: "Deep Archive", s3Requests: "S3 requests", firehose: "Firehose" };
+  const est = PRICING.estimates[x.region] || [];
+  const mults = Object.entries(reg).filter(([k, v]) => k !== "label" && v !== 1).map(([k, v]) => `${SVC[k]} ${v.toFixed(2)}×${est.includes(k) ? " (≈ estimate)" : ""}`).join(", ");
+  const rate = { off: 0, spot: x.sampleRate, allAfter: 1, allBefore: 1 }[x.fairness];
+  const A = [
+    ["Organization preset", PRESETS[S.preset].label + (S.preset === "federal" ? ` (Class ${S.fedClass})` : "") + (S.custom ? " · Custom" : ""), PRESETS[S.preset].desc],
+    ["Region", reg.label, mults ? `Priced at ${mults}. Everything else at commercial rates.` : "Commercial rates"],
+    ["Questions per month", x.N.toLocaleString("en-US"), ""],
+    ["Tokens per question", `${x.Tq} question + ${x.Td.toLocaleString("en-US")} documents + ${c.Tp} policy instructions`, "Policy instructions come from the Screen the question dial"],
+    ["Tokens per answer", x.To.toLocaleString("en-US"), ""],
+    ["Model / judge", `${MODELS[x.model].name} / ${MODELS[x.judge].name}${rate ? ` (${Math.round(rate * 100)}% ${x.fairness === "spot" ? "sampled" : "reviewed"})` : " (off)"}`, ""],
+    ["Dials", DIALS.map((d) => `${SHORT[d.k]}: ${LEVEL[d.k][x[d.k]]}`).join(" · "), ""],
+    ["Billing month shown", String(x.month), "Storage costs grow with month"],
+    ["Traffic", { steady: "Steady (1% cold starts)", bursty: "Bursty (8% cold starts)", provisioned: "Provisioned (0% cold starts)" }[x.traffic], ""],
+    ["Retention", `Logs ${months(x.logRetention)} · Archive ${x.archive ? x.archiveRetention + " months" : "—"}`, ""],
+    ["Orchestration", { none: "None", express: `Step Functions Express (${x.expressSeconds} s)`, standard: `Step Functions Standard (${x.standardTransitions} transitions)` }[x.orchestration], ""],
+    ["Screening scope", x.scopeQuestionOnly ? "Question only" : "Question + attached documents", ""],
+    ["Output checks", x.answer === "off" ? "None" : x.outputMode === "sync" ? "Synchronous (chunked)" : "Asynchronous", x.p3 ? "Forced synchronous for PII" : ""],
+  ];
+  const bl = Object.fromEntries(K.b.lines.map((l) => [l.key, l.regional]));
+  const premRows = {};
+  for (const l of c.lines) if (l.mult !== 1) { const k = l.mult.toFixed(3); (premRows[k] = premRows[k] || { mult: l.mult, base: 0, items: [] }).base += l.base; premRows[k].items.push(l.label.split(":")[0].split(" (")[0]); }
+  const bRows = c.lines.map((l) => `<tr><td><i class="s-${l.cat}" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px"></i>${esc(CATL[l.cat])}</td><td>${esc(l.label)}</td><td>${esc(l.qty)}</td><td>${esc(l.rate)}</td><td class="n">${fmt$2(l.base)}</td><td class="n">${bl[l.key] != null ? (l.base - bl[l.key] > 0.004 ? "+" + fmt$2(l.base - bl[l.key]) : "same") : "+" + fmt$2(l.base)}</td></tr>`).join("") +
+    Object.values(premRows).map((p) => `<tr><td><i class="s-premium" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px"></i>Region premium</td><td>${esc(reg.label)} pricing</td><td>${esc([...new Set(p.items)].slice(0, 4).join(", "))}${p.items.length > 4 ? "…" : ""}</td><td>× ${p.mult.toFixed(3).replace(/0+$/, "").replace(/\.$/, "")}${(PRICING.estimates[x.region] || []).length ? " (some ≈ estimate)" : ""}</td><td class="n">${fmt$2(p.base * (p.mult - 1))}</td><td class="n">+${fmt$2(p.base * (p.mult - 1))}</td></tr>`).join("");
+  const foot = [["Your total", fmt$2(K.total)], ["No-governance total", fmt$2(K.base)], ["Governance adds", fmt$2(K.adds)], ["Governance share", pct1(K.share)], ["Multiplier", K.mult.toFixed(2) + "×"], ["Cost per 1,000 questions", fmt$2(K.per1000)]];
+  const D = wfRows(x), Lp = latencyPlan(x);
+  const latRows = D.rows.map((r) => `<tr><td>${esc(r.label)}</td><td class="n">${Math.round(r.p50).toLocaleString("en-US")} ms</td><td class="n">${Math.round(r.p95).toLocaleString("en-US")} ms</td></tr>`).join("");
+  const flags = [];
+  if (est.length) flags.push(`≈ estimate: ${reg.label} multipliers for ${est.join(", ")}.`);
+  flags.push(`Assumed model latency: ${MODELS[x.model].name} first token ${x.ttftP50} / ${x.ttftP95} ms, ${x.tps} tokens/s.`);
+  flags.push(`Assumed: ${x.chunkTokens}-token output chunks (Bedrock doesn't publish its chunk size); cold-start init ${x.coldInitP50} / ${x.coldInitP95} ms; 250 ms billed per cold start.`);
+  flags.push("All step timings in the latency table are assumptions for illustration.");
+  if (x.arBlocked) flags.push("Platform limit applied: Automated Reasoning switched off in GovCloud and not billed.");
+  if (x.region === "govcloud" && !S.adv.judge && x.judge === "nova_micro") flags.push("Platform default applied: fairness judge set to Amazon Nova Micro in GovCloud.");
+  if (x.p3) flags.push("Platform limit applied: output checks forced to synchronous because the PII filter can't run asynchronously.");
+  if (x.dataProtection) flags.push("Known conflict: CloudWatch data protection is charged on both log classes here; one AWS blog says Standard includes it.");
+  const summary = [
+    `The AI Governance Tax: illustrative demo, not a pricing calculator (rates snapshot Nov 2026)`,
+    ctxLine(x),
+    `Dials: ${DIALS.map((d) => `${d.name} = ${LEVEL[d.k][x[d.k]]}`).join("; ")}`,
+    `Monthly total ${fmt$2(K.total)} vs ${fmt$2(K.base)} with no governance`,
+    `Governance adds ${fmt$2(K.adds)} (${pct1(K.share)} of the bill; ${K.mult.toFixed(2)}x the no-governance bill)`,
+    `Cost per 1,000 questions ${fmt$2(K.per1000)}`,
+    ...CATS.map(([k, l]) => `  ${l}: ${fmt$2(c.cats[k])}`),
+    `First word p50 ${sec2(L.p50)} / p95 ${sec2(L.p95)} (no governance ${sec2(B.p50)} / ${sec2(B.p95)}); ${grade(L.p50)[1]}; streaming ${L.broken ? "broken" : "kept"}`,
+  ].join("\n");
+  $("mathBody").innerHTML = `
+  <h4>A. Your selections</h4><table class="stack"><thead><tr><th>Setting</th><th>Value</th><th>What it means</th></tr></thead><tbody>${A.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>
+  <h4>B. Itemized monthly cost (month ${x.month})</h4><table class="stack"><thead><tr><th>Category</th><th>Item</th><th>Quantity</th><th>Unit rate</th><th class="n">Monthly $</th><th class="n">vs no governance</th></tr></thead><tbody>${bRows}</tbody><tfoot>${foot.map(([a, b]) => `<tr><td colspan="4">${a}</td><td class="n">${b}</td><td></td></tr>`).join("")}</tfoot></table>
+  ${K.c.people ? `<p class="note">Outside the cloud bill: reviewer time ≈ ${fmt$2(K.c.people)}/mo (${Math.round(x.N * 0.02).toLocaleString("en-US")} escalations × ${x.reviewerMinutes} min × $${x.reviewerHourly}/h).</p>` : ""}
+  <h4>C. Latency inputs</h4><table><thead><tr><th>Step</th><th class="n">p50</th><th class="n">p95</th></tr></thead><tbody>${latRows}</tbody></table>
+  <p class="note" style="margin-top:8px">Cold-start rate ${Math.round(Lp.coldRate * 100)}% · ${x.tps} tokens/s · ${x.chunkTokens}-token chunks · output checks ${Lp.outOn ? (Lp.outSync ? "synchronous" : "asynchronous") : "off"} · streaming ${L.broken ? "broken" : "kept"} · simulated first word p50 ${sec2(L.p50)} / p95 ${sec2(L.p95)} (5,000 draws, seed 42) · time to last word p50 ${sec2(L.full50)}</p>
+  <h4>D. Flags</h4><ul>${flags.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
+  <h4>Plain-text summary</h4><textarea id="sumText" readonly aria-label="Plain-text summary">${esc(summary)}</textarea>
+  <div class="acts" style="margin-top:8px"><button type="button" class="btn sm" id="copySum">Copy summary</button><span class="note" id="copyMsg" style="align-self:center"></span></div>`;
+}
+
+// ---------- method (§13) ----------
+function renderMethod() {
+  const src = [
+    ["Amazon Bedrock pricing (model rates, Guardrails, batch discount)", "aws.amazon.com/bedrock/pricing"],
+    ["Claude Sonnet 5.5 on Bedrock (model card)", "docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html"],
+    ["Claude Haiku 5.5 on Bedrock (7 Oct 2026)", "aws.amazon.com/about-aws/whats-new/2026/10/claude-haiku-5-5-aws"],
+    ["Amazon Nova in AWS GovCloud (US-West)", "aws.amazon.com/about-aws/whats-new/2025/03/amazon-nova-models-govcloud"],
+    ["Automated Reasoning checks, GA regions", "aws.amazon.com/about-aws/whats-new/2025/08/automated-reasoning-checks-amazon-bedrock-guardrails"],
+    ["Guardrails in Sydney (Jun 2026)", "aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-guardrails-sydney"],
+    ["Guardrails streaming behavior", "docs.aws.amazon.com/bedrock/latest/userguide/guardrails-streaming.html"],
+    ["CloudWatch pricing", "aws.amazon.com/cloudwatch/pricing"],
+    ["CloudWatch IA data protection (Mar 2026)", "aws.amazon.com/about-aws/whats-new/2026/03/amazon-cloudwatch-infrequent-access-log-class"],
+    ["Conflicting note on data protection", "aws.amazon.com/blogs/database/migrate-rds-and-aurora-logs-to-cloudwatch-infrequent-access"],
+    ["S3 128 KB lifecycle default", "aws.amazon.com/about-aws/whats-new/2024/09/amazon-s3-default-minimum-object-size-lifecycle-transition-rules"],
+    ["Firehose pricing (5 KB rounding)", "aws.amazon.com/firehose/pricing"],
+    ["Lambda INIT billing (1 Aug 2025)", "aws.amazon.com/blogs/compute/aws-lambda-standardizes-billing-for-init-phase"],
+    ["FedRAMP Certification Classes", "fedramp.gov/notices/0004"],
+    ["FedRAMP classes for agencies", "fedramp.gov/2026/agencies/use/classes"],
+    ["AWS FedRAMP status", "aws.amazon.com/compliance/fedramp"],
+    ["OMB M-26-14", "aws.amazon.com/blogs/publicsector/what-us-federal-agencies-need-to-know-about-omb-memorandum-m-26-14-part-1"],
+    ["EU AI Omnibus (Regulation (EU) 2026/1744)", "whitecase.com/insight-alert/eu-ai-omnibus-enters-force-amending-ai-act"],
+  ];
+  $("methodBody").innerHTML = `
+  <p><b>Method in three sentences.</b> Costs multiply posted per-unit AWS rates by a simplified per-question workload. Latency comes from a seeded simulation of each step's typical and slow-day timing. Regulatory notes say which ones come from a specific rule and which are common practice.</p>
+  <h4>Key assumptions</h4><p>About 4 characters per token · a month of 30 days for buffering math · 8 KB of logs and 4 KB of audit record per question · 0.30 log compression · 1% cold starts (steady) or 8% (bursty) · 250 ms billed INIT per cold start · 50-token output chunks · the assumed model latency table below · judge rubric of 500 tokens and verdict of 150 tokens · free tier ignored.</p>
+  <table><thead><tr><th>Model</th><th class="n">First token p50 / p95</th><th class="n">Tokens per second</th><th class="n">Price in / out per 1M</th></tr></thead><tbody>${Object.values(MODELS).map((m) => `<tr><td>${m.name}</td><td class="n">${m.latency.ttftP50} / ${m.latency.ttftP95} ms</td><td class="n">${m.latency.tps}</td><td class="n">$${pr(m.in)} / $${pr(m.out)}</td></tr>`).join("")}</tbody></table>
+  <p class="note">Model latency values are assumptions, not published figures.</p>
+  <h4>How the latency simulation works</h4><p>Each step is a log-normal fitted to its p50 and p95. Parallel steps take the slower of their draws; sequential steps add. Cold starts are mixed in at the cold-start rate. 5,000 draws with a seeded generator (mulberry32, seed 42), so numbers don't change between renders. Experience grades are design choices, not research findings: Instant under 0.8 s, Responsive 0.8–1.8 s, Noticeable drag 1.8–3.5 s, Abandonment risk above 3.5 s.</p>
+  <h4>Known conflicts and open items</h4><ul>
+  <li>CloudWatch data protection: AWS's pricing-page examples charge $0.12/GB under both log classes, but an AWS blog says Standard includes it at no extra cost. This demo charges both.</li>
+  <li>GovCloud multipliers for Lambda, CloudWatch, S3 and Firehose, and the EU multiplier for Nova, are estimates.</li>
+  <li>Claude Haiku 5.5 in GovCloud is unconfirmed.</li>
+  <li>Bedrock's native streaming chunk size isn't published.</li>
+  <li>Lambda Function URLs may not be available in GovCloud. That affects how you'd stream there, not the math.</li>
+  <li>A production version should generate the rates from the AWS Price List API instead of hard-coding them.</li></ul>
+  <h4>Sources</h4><ul class="src-list">${src.map(([t, u]) => `<li><a href="https://${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}
+  <li>Regulations: 16 CFR 314.4 (GLBA Safeguards) · 12 CFR 1002.12 (Reg B) · 45 CFR 164.312, 164.316 (HIPAA) · 34 CFR Part 99 (FERPA) · SEC Rule 17a-4 · EU AI Act Arts. 12, 14, 19, 26 · GDPR Art. 17</li></ul>`;
+}
+
+// ---------- worked examples (§10) ----------
+function weState(k, cls, mod) { const s = presetState(k, cls || "D"); if (mod) mod(s); return s; }
+function loadState(s, open) { S = JSON.parse(JSON.stringify(s)); S.custom = !!s.custom; update(true); if (open) { $(open).open = true; drawRec(); $(open).scrollIntoView({ behavior: "smooth", block: "start" }); } else document.querySelector(".controls").scrollIntoView({ behavior: "smooth", block: "start" }); }
+const sumKeys = (c, keys, base) => c.lines.filter((l) => keys.includes(l.key)).reduce((a, l) => a + (base ? l.base : l.regional), 0);
+const GRK = ["grIn", "grOut", "grGround", "grAR"];
+function chk(got, exp, tol) { const d = Math.abs(got - exp) / Math.abs(exp || 1); return d <= tol + 1e-9 ? '<span class="ok">✓ match</span>' : `<span class="bad">✗ off by ${(d * 100).toFixed(1)}%</span>`; }
+function weTable(rows) { return `<table class="stack"><thead><tr><th>Result</th><th class="n">Expected</th><th class="n">This app</th><th>Check</th></tr></thead><tbody>${rows.map(([l, e, g, en, gn, tol]) => `<tr><td>${esc(l)}</td><td class="n">${e}</td><td class="n">${g}</td><td>${en == null ? "" : chk(gn, en, tol)}</td></tr>`).join("")}</tbody></table>`; }
+function inTable(rows) { return `<table class="stack" style="margin-bottom:8px"><thead><tr><th>Input</th><th>Value</th></tr></thead><tbody>${rows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</tbody></table>`; }
+const WE_LOAD = {};
+function renderWE() {
+  const H = [];
+  const card = (id, title, body, btn) => `<div class="we"><div class="we-h"><h3>${title}</h3>${btn ? `<button type="button" class="btn sm" data-we="${id}">Load this example</button>` : ""}</div>${body}</div>`;
+  // WE1
+  {
+    const s = weState("federal", "D"), x = derive(s), c = calcCost(x), c2 = calcCost({ ...x, scopeQuestionOnly: true });
+    WE_LOAD.we1 = () => loadState({ ...s, custom: false });
+    const a = sumKeys(c, ["model"]), ab = sumKeys(c, ["model"], true), g = sumKeys(c, GRK), g2 = sumKeys(c2, GRK);
+    H.push(card("we1", "WE1: Guardrails can cost more than the AI on a low-cost model", inTable([["Questions per month", "1,000,000"], ["Tokens", "200 question + 1,300 documents = 1,500 in · 400 out"], ["Model / region", "Amazon Nova Pro · AWS GovCloud (US)"], ["Input filters", "Content + denied topics + ML PII (whole input scanned)"], ["Output filters", "Content + denied topics + ML PII + contextual grounding"], ["Automated Reasoning", "Off (not offered in GovCloud)"]]) +
+      weTable([["AI model at GovCloud rates", "$2,976.00", fmt$2(a), 2976, a, 0.01], ["AI model at commercial rates", "$2,480.00", fmt$2(ab), 2480, ab, 0.01], ["Guardrails, whole input scanned", "$4,800.00", fmt$2(g), 4800, g, 0.01], ["Guardrails, question only scanned", "$2,400.00", fmt$2(g2), 2400, g2, 0.01]]) +
+      `<p class="note">Guardrails are ${(g / a).toFixed(1)}× the model when documents are scanned, ${(g2 / a).toFixed(1)}× when only the question is. v1's $5,208 included Automated Reasoning, which GovCloud doesn't offer. Loading this example opens the US federal (Class D) preset, which uses these filters.</p>`, true));
+  }
+  // WE2
+  {
+    const s = weState("everyday"), x = derive(s), K = kpis(x), L = calcLatency(x), K2 = kpis({ ...x, scopeQuestionOnly: true });
+    WE_LOAD.we2 = () => loadState(s);
+    H.push(card("we2", "WE2: The light-touch surprise (Everyday business preset)", inTable([["Questions per month", "1,000,000"], ["Tokens", "200 + 1,300 in · 400 out"], ["Model / region", "Claude Haiku 5.5 · US commercial"], ["Month", "12"], ["Dials", "Question: Light · Answer: Light · Fairness: Off · Human: Off · Records: Basic"]]) +
+      weTable([["AI model", "$350.00", fmt$2(K.c.cats.ai), 350, K.c.cats.ai, 0.01], ["Guardrails (input $900 + output $300)", "$1,200.00", fmt$2(sumKeys(K.c, GRK)), 1200, sumKeys(K.c, GRK), 0.01], ["Logs", "$3.88", fmt$2(K.c.cats.logs), 3.88, K.c.cats.logs, 0.01],
+        ["Your total", "$1,553.88", fmt$2(K.total), 1553.88, K.total, 0.01], ["No-governance total", "$353.88", fmt$2(K.base), 353.88, K.base, 0.01], ["Governance adds", "$1,200.00", fmt$2(K.adds), 1200, K.adds, 0.01], ["Governance share", "77.2%", pct1(K.share), 77.2, K.share * 100, 0.01], ["Multiplier", "4.39×", K.mult.toFixed(2) + "×", 4.39, K.mult, 0.01],
+        ["Screening the question only: total", "$803.88", fmt$2(K2.total), 803.88, K2.total, 0.01], ["Screening the question only: share", "56.0%", pct1(K2.share), 56.0, K2.share * 100, 0.01],
+        ["First word p50", "0.56 s", sec2(L.p50), 560, L.p50, 0.05], ["First word p95", "1.10 s", sec2(L.p95), 1100, L.p95, 0.05], ["Grade", "Instant", grade(L.p50)[1], null]]) +
+      `<p class="note">The takeaway: on a budget model, a single content filter scanning attached documents costs more than the model reading them.</p>`, true));
+  }
+  // WE3
+  {
+    const base = { N: 1e6, archiveKB: 4, archiveHot: 3, archiveRetention: 72 };
+    const tot = (mode, m, b = base) => { const a = archiveTerms({ ...b, s3Mode: mode }, m); return a.requests + a.hot + a.cold + a.firehose; };
+    const exp = { default: [6.05, 8.16, 11.32], override: [57.15, 62.18, 69.72], batched: [0.6, 0.7, 0.86] };
+    const lbl = { default: "Default lifecycle (objects < 128 KB never transition)", override: "Override forcing 4 KB objects to Deep Archive (the trap)", batched: "Firehose batched (≈347 records per object, incl. $0.14 Firehose)" };
+    const rows = [];
+    for (const mode of ["default", "override", "batched"]) [12, 36, 72].forEach((m, i) => { const g = tot(mode, m); rows.push([`${lbl[mode]}, month ${m}`, fmt$2(exp[mode][i]), fmt$2(g), exp[mode][i], g, 0.01]); });
+    const big = { ...base, N: 50e6 }, e50 = { default: 407.93, override: 3108.78, batched: 26.62 };
+    for (const mode in e50) { const g = tot(mode, 36, big); rows.push([`50M questions/month, month 36: ${mode === "override" ? "trap" : mode}`, fmt$2(e50[mode]), fmt$2(g), e50[mode], g, 0.01]); }
+    const r36 = tot("override", 36) / tot("batched", 36), d36 = tot("override", 36) / tot("default", 36);
+    WE_LOAD.we3 = () => loadState(weState("everyday", "D", (s) => { s.dials.records = "strict"; s.adv.archiveRetention = 72; s.adv.s3Mode = "override"; s.work.month = 36; s.custom = true; }), "pRec");
+    H.push(card("we3", "WE3: The audit archive's three S3 behaviors", inTable([["Questions per month", "1,000,000"], ["Audit record", "4 KB per question"], ["Region", "US East (commercial)"], ["Lifecycle", "3 months in S3 Standard, then Glacier Deep Archive; 6-year retention"]]) + weTable(rows) +
+      `<p class="note">At month 36 the trap costs ${r36.toFixed(0)}× the batched setup and ${d36.toFixed(1)}× the default. Batching reaches the 10,000-records-per-object cap only above about 28.8M questions per month. Loading this example sets Records to Strict with the trap behavior at month 36 and opens the 6-year chart.</p>`, true));
+  }
+  // WE4
+  {
+    const s = weState("everyday", "D", (st) => { st.adv.orchestration = "standard"; st.adv.expressSeconds = 1.2; st.custom = true; });
+    const x = derive(s), cs = calcCost(x), xe = { ...x, orchestration: "express" }, ce = calcCost(xe);
+    const std = sumKeys(cs, ["sfStandard"]), wf = sumKeys(ce, ["sfExpress"]), lg = sumKeys(ce, ["logIngest"]) - sumKeys(cs, ["logIngest"]), ex = wf + lg;
+    const wfOnly = (tr, secs) => { const a = (1e6 * tr * 25) / 1e6, b = 1 + 1e6 * (Math.ceil(secs * 10) / 10) * 0.0625 * 0.00001667; return 1 - b / a; };
+    WE_LOAD.we4 = () => loadState(s);
+    H.push(card("we4", "WE4: Step Functions Express vs Standard", inTable([["Executions per month", "1,000,000"], ["Region", "US commercial"], ["Standard", "8 state transitions per execution"], ["Express", "1.2 s per execution, 64 MB, plus 2 KB of execution logs to CloudWatch Standard"]]) +
+      weTable([["Standard", "$200.00", fmt$2(std), 200, std, 0.01], ["Express workflow", "$2.25", fmt$2(wf), 2.25, wf, 0.01], ["Express logs (ingestion)", "$0.95", fmt$2(lg), 0.95, lg, 0.02], ["Express total", "$3.20", fmt$2(ex), 3.2, ex, 0.01], ["Savings", "98.4%", pct1(1 - ex / std), 98.4, (1 - ex / std) * 100, 0.01],
+        ["Savings range (4–10 transitions, 0.3–8 s runs, workflow charges)", "90.7% – 99.5%", `${pct1(wfOnly(4, 8))} – ${pct1(wfOnly(10, 0.3))}`, null]]) +
+      `<p class="note">Human approvals that wait hours still need Standard, because Express runs are capped at 5 minutes. Loading this example puts Step Functions Standard on every request; the cost tip then shows the Express alternative live.</p>`, true));
+  }
+  // WE5
+  {
+    const mk = (mod) => weState("everyday", "D", (s) => { s.work.model = "sonnet_55"; s.dials = { question: "off", answer: "off", fairness: "off", human: "off", records: "basic" }; s.custom = true; mod(s); });
+    const full = (s) => { s.dials.question = "strict"; s.dials.answer = "strict"; s.adv.orchestration = "express"; };
+    const rows = [["Question screening only", mk((s) => { s.dials.question = "light"; }), 0.91, 1.8, "Kept", "Responsive"],
+      ["Full checks: consent ∥ PII scrub, Express, input filter, output checked in chunks with grounding", mk(full), 1.87, 2.79, "Kept", "Noticeable drag"],
+      ["Same + fairness review before the user sees the answer", mk((s) => { full(s); s.dials.fairness = "allBefore"; }), 6.49, 7.58, "Broken", "Abandonment risk"],
+      ["Same at 65 tokens/s (v1's assumption)", mk((s) => { full(s); s.dials.fairness = "allBefore"; s.adv.lat = { sonnet_55: { tps: 65 } }; }), 7.93, 9.03, "Broken", "Abandonment risk"]];
+    let t = `<table class="stack"><thead><tr><th>Setup</th><th class="n">Expected p50 / p95</th><th class="n">This app</th><th>Streaming · grade</th><th>Check</th><th></th></tr></thead><tbody>`;
+    rows.forEach(([l, s, e50, e95, es, eg], i) => {
+      const L = calcLatency(derive(s)); WE_LOAD["we5_" + i] = () => loadState(s);
+      t += `<tr><td>${esc(l)}</td><td class="n">${e50.toFixed(2)} / ${e95.toFixed(2)} s</td><td class="n">${sec2(L.p50)} / ${sec2(L.p95)}</td><td>${L.broken ? "Broken" : "Kept"} · ${grade(L.p50)[1]}${(L.broken ? "Broken" : "Kept") === es && grade(L.p50)[1] === eg ? "" : " (expected " + es + " · " + eg + ")"}</td><td>${chk(L.p50, e50 * 1000, 0.05)} ${chk(L.p95, e95 * 1000, 0.05)}</td><td><button type="button" class="btn sm" data-we="we5_${i}">Load</button></td></tr>`;
+    });
+    t += "</tbody></table>";
+    H.push(card("we5", "WE5: What breaks streaming", inTable([["Model", "Claude Sonnet 5.5 (first token 750 / 1,600 ms; 85 tokens/s; assumed)"], ["Answer", "400 tokens"], ["Traffic", "Steady (1% cold starts)"], ["Simulation", "Reference run: 10,000 draws, seed 42. This app: 5,000 draws, within ±5%."]]) + t +
+      `<p class="note">The hidden writing time alone is 399 ÷ 85 = 4.69 s (6.14 s at 65 tokens/s, v1's figure). v1's root-sum-of-squares method gives 1.79 / 2.74 s for the chunked full-check chain, against a simulated 1.87 / 2.79 s.</p>`, false));
+  }
+  // WE6
+  {
+    const rows = [["Everyday business", "everyday", "D", 1553.88, 353.88, 1200.0, 77.2, 4.39, 0.56, 1.1], ["Higher education", "higher", "D", 3668.59, 353.88, 3314.71, 90.4, 10.37, 1.16, 1.69], ["Lender / financial", "lender", "D", 4816.26, 353.88, 4462.38, 92.7, 13.61, 1.31, 1.92],
+      ["Healthcare", "health", "D", 4511.13, 353.88, 4157.25, 92.2, 12.75, 1.31, 1.94], ["US federal, Class D", "federal", "D", 8633.08, 2483.88, 6149.2, 71.2, 3.48, 1.55, 2.12], ["US federal, Class C", "federal", "C", 7194.52, 2483.88, 4710.64, 65.5, 2.9, 1.55, 2.12], ["EU high-risk AI", "eu", "D", 4012.77, 353.88, 3658.89, 91.2, 11.34, 1.16, 1.69]];
+    let t = `<table class="stack"><thead><tr><th>Preset</th><th class="n">Your total (expected)</th><th class="n">No-gov. total</th><th class="n">Share · multiplier</th><th class="n">First word p50 / p95</th><th>Check</th><th></th></tr></thead><tbody>`;
+    rows.forEach(([l, k, cls, tot, base, adds, sh, mu, l50, l95], i) => {
+      const s = weState(k, cls), x = derive(s), K = kpis(x), L = calcLatency(x); WE_LOAD["we6_" + i] = () => loadState(s);
+      t += `<tr><td>${l}</td><td class="n">${fmt$2(K.total)} (${fmt$2(tot)})</td><td class="n">${fmt$2(K.base)}</td><td class="n">${pct1(K.share)} · ${K.mult.toFixed(2)}×</td><td class="n">${sec2(L.p50)} / ${sec2(L.p95)} (${l50.toFixed(2)} / ${l95.toFixed(2)})</td><td>${chk(K.total, tot, 0.01)} ${chk(K.share * 100, sh, 0.01)} ${chk(L.p50, l50 * 1000, 0.05)}</td><td><button type="button" class="btn sm" data-we="we6_${i}">Load</button></td></tr>`;
+    });
+    t += "</tbody></table>";
+    const v = [];
+    { const s = weState("lender", "D", (st) => { st.dials.fairness = "allBefore"; st.custom = true; }), K = kpis(derive(s)), L = calcLatency(derive(s)); WE_LOAD.we6v0 = () => loadState(s); v.push(["Lender, fairness review moved before the answer", `same cost, ${(4.72).toFixed(2)} / 5.60 s, Abandonment risk`, `${fmt$2(K.total)}, ${sec2(L.p50)} / ${sec2(L.p95)}, ${grade(L.p50)[1]}`, 4720, L.p50, 0.05, "we6v0"]); }
+    { const s = weState("higher", "D", (st) => { st.adv.scopeQuestionOnly = true; st.custom = true; }), K = kpis(derive(s)); WE_LOAD.we6v1 = () => loadState(s); v.push(["Higher education, screening the question only", "$1,668.59 · 78.8%", `${fmt$2(K.total)} · ${pct1(K.share)}`, 1668.59, K.total, 0.01, "we6v1"]); }
+    { const s = weState("federal", "D", (st) => { st.adv.scopeQuestionOnly = true; st.custom = true; }), K = kpis(derive(s)); WE_LOAD.we6v2 = () => loadState(s); v.push(["Federal Class D, screening the question only", "$6,233.08 · 60.2%", `${fmt$2(K.total)} · ${pct1(K.share)}`, 6233.08, K.total, 0.01, "we6v2"]); }
+    { const s = weState("higher", "D", (st) => { st.work.model = "sonnet_55"; st.custom = true; }), K = kpis(derive(s)); WE_LOAD.we6v3 = () => loadState(s); v.push(["Higher education on Claude Sonnet 5.5", "$11,610.59 · adds $4,606.71 · 39.7%", `${fmt$2(K.total)} · adds ${fmt$2(K.adds)} · ${pct1(K.share)}`, 11610.59, K.total, 0.01, "we6v3"]); }
+    t += `<h4>Variants worth showing in the post</h4><table class="stack"><thead><tr><th>Variant</th><th class="n">Expected</th><th class="n">This app</th><th>Check</th><th></th></tr></thead><tbody>${v.map(([l, e, g, en, gn, tol, id]) => `<tr><td>${l}</td><td class="n">${e}</td><td class="n">${g}</td><td>${chk(gn, en, tol)}</td><td><button type="button" class="btn sm" data-we="${id}">Load</button></td></tr>`).join("")}</tbody></table>`;
+    const fc = calcCost(derive(weState("federal", "D"))).cats;
+    t += `<p class="note" style="margin-top:8px"><b>Federal Class D cost stack:</b> AI model ${fmt$2(fc.ai)} · Safety filters ${fmt$2(fc.safety)} · Region premium ${fmt$2(fc.premium)} · Workflow &amp; compute ${fmt$2(fc.workflow)} · Logs &amp; records ${fmt$2(fc.logs)} · Fairness reviews ${fmt$2(fc.fairness)}. The cheaper the model, the larger governance looms.</p>`;
+    H.push(card("we6", "WE6: Presets at their defaults", '<p class="note">Every row: 1,000,000 questions/month · 200 question + 1,300 document + 400 answer tokens · month 12 · steady traffic · Claude Haiku 5.5 (Federal: Nova Pro, judge Nova Micro). Tolerances: costs ±1%, simulated latency ±5%.</p>' + t, false));
+  }
+  $("weBody").innerHTML = H.join("");
+  UI.weDone = true;
+}
+
+// ---------- records over 6 years ----------
+function drawRec() {
+  const svg = $("rec"), R = UI.R; if (!R || !$("pRec").open) return;
+  const W = svg.clientWidth, H = svg.clientHeight; if (!W) return;
+  const x = R.x, cat = (xx) => calcCost(xx).lines.filter((l) => l.cat === "logs").reduce((a, l) => a + l.regional, 0);
+  const modes = x.archive ? ["batched", "default", "override"] : [x.s3Mode];
+  const ser = modes.map((m) => ({ m, v: Array.from({ length: 72 }, (_, i) => cat({ ...x, month: i + 1, s3Mode: m })) }));
+  const ymax = Math.max(...ser.flatMap((s) => s.v)) * 1.1 || 1;
+  const narrow = W < 520, L = narrow ? 44 : 60, Rt = 12, T = 12, B = 30;
+  const X = (i) => L + (i / 71) * (W - L - Rt), Y = (v) => T + (1 - v / ymax) * (H - T - B);
+  const st = niceStep(ymax, 5);
+  let s = "";
+  for (let v = 0; v <= ymax; v += st) s += `<line x1="${L}" x2="${W - Rt}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" class="mut">${fmt$(v)}</text>`;
+  for (let yr = 1; yr <= 6; yr++) { const xx = X(yr * 12 - 1); s += `<line x1="${xx}" x2="${xx}" y1="${T}" y2="${H - B}" stroke="var(--line)" stroke-dasharray="2 3"/><text x="${xx}" y="${H - B + 18}" text-anchor="${yr === 6 ? "end" : "middle"}" class="mut">${narrow ? "Y" + yr : "Year " + yr}</text>`; }
+  const col = { batched: "var(--c-workflow)", default: "var(--c-ai)", override: "var(--brick)" };
+  for (const sr of ser) { const cur = sr.m === x.s3Mode; s += `<polyline fill="none" stroke="${x.archive ? col[sr.m] : "var(--c-logs)"}" stroke-width="${cur ? 3.5 : 1.5}" ${cur ? "" : 'stroke-dasharray="5 3"'} points="${sr.v.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ")}"/>`; }
+  const mx = X(x.month - 1); s += `<line x1="${mx}" x2="${mx}" y1="${T}" y2="${H - B}" stroke="var(--ink)" stroke-width="1.5"/>`;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.innerHTML = s;
+  const nm = { batched: "Firehose batched", default: "Default lifecycle", override: "Forced to Deep Archive (the trap)" };
+  $("recCap").textContent = x.archive ? `Logs & records cost per month, months 1 to 72, under the three S3 behaviors. The thick line is your current setting; the vertical line marks the billing month shown (${x.month}).` : `Logs & records cost per month, months 1 to 72. Set Records to Strict to add the tamper-proof archive and compare its three S3 behaviors.`;
+  $("recTable").innerHTML = `<table style="margin-top:10px"><thead><tr><th>${x.archive ? "S3 behavior" : "Series"}</th><th class="n">Month 12</th><th class="n">Month 36</th><th class="n">Month 72</th></tr></thead><tbody>${ser.map((sr) => `<tr><td><span style="display:inline-block;width:14px;height:3px;background:${x.archive ? col[sr.m] : "var(--c-logs)"};vertical-align:middle;margin-right:6px"></span>${x.archive ? nm[sr.m] : "Logs & records"}${sr.m === x.s3Mode && x.archive ? " (current)" : ""}</td><td class="n">${fmt$2(sr.v[11])}</td><td class="n">${fmt$2(sr.v[35])}</td><td class="n">${fmt$2(sr.v[71])}</td></tr>`).join("")}</tbody></table>`;
+}
+
+// ---------- advanced (§4.4) ----------
+const LATK = ["ttftP50", "ttftP95", "tps"];
+const ADV = [
+  ["Workload", [{ k: "N", t: "log", l: "Questions per month" }, { k: "Tq", t: "range", l: "Question tokens", min: 20, max: 2000, step: 10 }, { k: "Td", t: "range", l: "Document tokens", min: 0, max: 20000, step: 100 }, { k: "To", t: "range", l: "Answer tokens", min: 50, max: 4000, step: 50 }, { k: "month", t: "range", l: "Billing month to show", min: 1, max: 72, step: 1 }]],
+  ["Region", [{ k: "region", t: "sel", l: "Region", o: Object.entries(REG).map(([k, r]) => [k, r.label]) }]],
+  ["Screening scope", [{ k: "scopeQuestionOnly", t: "chk", l: "Screen only the user's question, not the attached documents", n: "The biggest cost lever. The grounding check still reads the documents." }]],
+  ["Output mode", [{ k: "outputMode", t: "sel", l: "Output checks", o: [["sync", "Synchronous: check chunks as they stream"], ["async", "Asynchronous: check alongside, no wait"]] }]],
+  ["Extra checks", [{ k: "automatedReasoning", t: "chk", l: "Automated Reasoning (1 policy)", n: "Not offered in AWS GovCloud (US)." }, { k: "wholeAnswerCheck", t: "chk", l: "Whole-answer custom check (Lambda, 20 ms)", n: "Breaks streaming." }, { k: "modelInWorkflow", t: "chk", l: "Run the model call inside the workflow", n: "Breaks streaming. Needs Express or Standard orchestration." }]],
+  ["Fairness judge", [{ k: "judge", t: "sel", l: "Judge model", o: Object.entries(MODELS).map(([k, m]) => [k, m.name]) }, { k: "sampleRate", t: "range", l: "Spot-check sample rate", min: 0, max: 100, step: 1, pct: true }, { k: "rubricTokens", t: "num", l: "Rubric tokens", min: 0, max: 5000, step: 50 }, { k: "judgeOutTokens", t: "num", l: "Judge output tokens", min: 10, max: 2000, step: 10 }, { k: "batchJudge", t: "chk", l: "Run after-the-fact reviews in batch (≈50% off)" }]],
+  ["Orchestration", [{ k: "orchestration", t: "sel", l: "Engine", o: [["none", "None (simple chaining)"], ["express", "Step Functions Express"], ["standard", "Step Functions Standard"]] }, { k: "expressSeconds", t: "num", l: "Express run time (s)", min: 0.1, max: 300, step: 0.1 }, { k: "standardTransitions", t: "num", l: "Standard transitions per request", min: 1, max: 50, step: 1 }]],
+  ["Traffic", [{ k: "traffic", t: "sel", l: "Traffic pattern", o: [["steady", "Steady (1% cold starts)"], ["bursty", "Bursty (8% cold starts)"], ["provisioned", "Provisioned concurrency (0% cold starts)"]] }]],
+  ["Logs", [{ k: "logClass", t: "sel", l: "Log class", o: [["standard", "Standard"], ["ia", "Infrequent Access"]] }, { k: "dataProtection", t: "chk", l: "Data protection (mask personal info in logs)" }, { k: "logKB", t: "num", l: "KB of logs per request", min: 1, max: 100, step: 1 }, { k: "compression", t: "range", l: "Compression ratio", min: 0.2, max: 0.5, step: 0.05 }, { k: "logRetention", t: "num", l: "Log retention (months)", min: 1, max: 120, step: 1 }]],
+  ["Archive", [{ k: "archiveKB", t: "num", l: "Audit record size (KB)", min: 1, max: 64, step: 1 }, { k: "archiveHot", t: "num", l: "Months in S3 Standard", min: 0, max: 72, step: 1 }, { k: "archiveRetention", t: "num", l: "Archive retention (months)", min: 1, max: 120, step: 1 }, { k: "s3Mode", t: "sel", l: "S3 behavior", o: [["default", "Default lifecycle"], ["override", "Force small objects to Deep Archive (the trap)"], ["batched", "Firehose batched"]] }]],
+  ["Latency assumptions", [{ k: "ttftP50", t: "num", l: "Model first token, typical (ms)", min: 20, max: 20000, step: 10 }, { k: "ttftP95", t: "num", l: "Model first token, slow day (ms)", min: 20, max: 30000, step: 10 }, { k: "tps", t: "num", l: "Tokens per second", min: 5, max: 1000, step: 1 }, { k: "chunkTokens", t: "num", l: "Output chunk size (tokens)", min: 5, max: 500, step: 5 }, { k: "coldInitP50", t: "num", l: "Cold-start init, typical (ms)", min: 10, max: 5000, step: 10 }, { k: "coldInitP95", t: "num", l: "Cold-start init, slow day (ms)", min: 10, max: 10000, step: 10 }]],
+  ["Billing detail", [{ k: "billPerChunk", t: "chk", l: "Bill output checks per chunk", n: "For teams running their own chunked checks through the ApplyGuardrail API." }]],
+  ["People cost (outside the cloud bill)", [{ k: "showPeople", t: "chk", l: "Show reviewer time when Human review is on" }, { k: "reviewerMinutes", t: "num", l: "Reviewer minutes per escalation", min: 0.5, max: 120, step: 0.5 }, { k: "reviewerHourly", t: "num", l: "Reviewer hourly cost ($)", min: 1, max: 500, step: 1 }]],
+];
+const ADVI = Object.fromEntries(ADV.flatMap(([, it]) => it.map((i) => [i.k, i])));
+const LOGMIN = Math.log10(1e4), LOGMAX = Math.log10(5e7);
+const toLog = (n) => Math.round(((Math.log10(n) - LOGMIN) / (LOGMAX - LOGMIN)) * 1000);
+const fromLog = (v) => { const n = Math.pow(10, LOGMIN + (v / 1000) * (LOGMAX - LOGMIN)); const p = Math.pow(10, Math.floor(Math.log10(n)) - 1); return Math.round(n / p) * p; };
+function renderAdvanced() {
+  $("advGrid").innerHTML = ADV.map(([h, items]) => `<h4>${esc(h)}</h4>` + items.map((i) => {
+    const id = "adv-" + i.k;
+    if (i.t === "chk") return `<div class="ai-row" id="row-${i.k}"><label class="ai-chk"><input type="checkbox" id="${id}" data-adv="${i.k}"><span>${esc(i.l)}${i.n ? `<br><span class="note" style="font-weight:400">${esc(i.n)}</span>` : ""}</span></label><span class="def" id="def-${i.k}"></span></div>`;
+    if (i.t === "sel") return `<div class="ai-row" id="row-${i.k}"><label for="${id}">${esc(i.l)}</label><select id="${id}" data-adv="${i.k}">${i.o.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("")}</select><span class="def" id="def-${i.k}"></span></div>`;
+    if (i.t === "num") return `<div class="ai-row" id="row-${i.k}"><label for="${id}">${esc(i.l)}</label><input type="number" id="${id}" data-adv="${i.k}" min="${i.min}" max="${i.max}" step="${i.step}" inputmode="decimal"><span class="def" id="def-${i.k}"></span></div>`;
+    const mn = i.t === "log" ? 0 : i.min, mx = i.t === "log" ? 1000 : i.max, sp = i.t === "log" ? 1 : i.step;
+    return `<div class="ai-row" id="row-${i.k}"><label for="${id}">${esc(i.l)}: <span class="rv" id="rv-${i.k}"></span></label><input type="range" id="${id}" data-adv="${i.k}" min="${mn}" max="${mx}" step="${sp}"><span class="def" id="def-${i.k}"></span></div>`;
+  }).join("")).join("");
+}
+function advShow(i, v) {
+  if (i.t === "chk") return v ? "On" : "Off";
+  if (i.t === "sel") return (i.o.find((o) => o[0] === v) || [, v])[1];
+  if (i.k === "N") return v.toLocaleString("en-US");
+  if (i.pct) return Math.round(v * 100) + "%";
+  if (i.k === "compression") return Number(v).toFixed(2);
+  return Number(v).toLocaleString("en-US");
+}
+function syncAdvanced(R) {
+  if (!$("pAdv").open) return;
+  const x = R.x, d = derive({ ...S, adv: {} }), dm = MODELS[S.work.model].latency;
+  for (const [, items] of ADV) for (const i of items) {
+    const el = $("adv-" + i.k); if (!el) continue;
+    const raw = S.adv[i.k];
+    let v = i.k in WORK_DEFAULT ? S.work[i.k] : i.k === "outputMode" ? raw ?? x.outputMode : i.k === "automatedReasoning" || i.k === "modelInWorkflow" ? !!raw : x[i.k];
+    const def = i.k in WORK_DEFAULT ? WORK_DEFAULT[i.k] : LATK.includes(i.k) ? dm[i.k] : i.k === "automatedReasoning" || i.k === "modelInWorkflow" ? false : d[i.k];
+    if (document.activeElement !== el) {
+      if (i.t === "chk") el.checked = !!v;
+      else if (i.t === "log") el.value = toLog(v);
+      else if (i.pct) el.value = Math.round(v * 100);
+      else el.value = v;
+    }
+    const rv = $("rv-" + i.k); if (rv) rv.textContent = advShow(i, v);
+    $("def-" + i.k).textContent = "Default: " + advShow(i, def) + (i.k === "outputMode" && x.p3 ? " · forced synchronous: the PII filter can't run asynchronously" : "");
+  }
+  const ar = $("adv-automatedReasoning"), gov = x.region === "govcloud";
+  ar.disabled = gov; $("row-automatedReasoning").classList.toggle("dis", gov);
+  const miw = $("adv-modelInWorkflow"), none = x.orchestration === "none";
+  miw.disabled = none; $("row-modelInWorkflow").classList.toggle("dis", none);
+}
+function setAdv(k, v) {
+  if (k in WORK_DEFAULT) S.work[k] = v;
+  else if (LATK.includes(k)) { S.adv.lat = { ...(S.adv.lat || {}) }; S.adv.lat[S.work.model] = { ...(S.adv.lat[S.work.model] || {}), [k]: v }; }
+  else S.adv[k] = v;
+  S.custom = true;
+}
+function readAdv(el) {
+  const k = el.dataset.adv, i = ADVI[k];
+  if (i.t === "chk") return el.checked;
+  if (i.t === "sel") return el.value;
+  let v = Number(el.value); if (!Number.isFinite(v)) return null;
+  if (i.t === "log") return fromLog(v);
+  if (i.pct) return v / 100;
+  v = Math.min(i.max, Math.max(i.min, v));
+  return v;
+}
+
+// ---------- main loop ----------
+let pending = null;
+function update(now) {
+  clearTimeout(pending);
+  const run = () => {
+    const R = computeAll(); UI.R = R;
+    syncControls(R); renderResults(R); renderAdvisories(R); renderLatency(R);
+    if ($("pMath").open) renderMath(R);
+    drawRec(); syncAdvanced(R); feelInit();
+  };
+  if (now === true) run(); else pending = setTimeout(run, 100);
+}
+
+// ---------- events ----------
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.name === "preset") { const keep = S.fedClass; S = presetState(t.value, keep); update(true); return; }
+  if (t.name === "fedClass") { S.fedClass = t.value; update(true); return; }
+  if (t.name && t.name.startsWith("w-")) { const k = t.name.slice(2); S.work[k] = k === "model" ? t.value : Number(t.value); S.custom = true; update(true); return; }
+  if (t.name && t.name.startsWith("d-")) { S.dials[t.name.slice(2)] = t.value; S.custom = true; update(true); return; }
+  if (t.name === "feelDay") { feelInit(); return; }
+  if (t.dataset.adv) { const v = readAdv(t); if (v != null) { setAdv(t.dataset.adv, v); update(true); } }
+});
+document.addEventListener("input", (e) => {
+  const t = e.target;
+  if (t.dataset && t.dataset.adv && (t.type === "range" || t.type === "number")) {
+    const v = readAdv(t); if (v == null) return;
+    setAdv(t.dataset.adv, v);
+    const i = ADVI[t.dataset.adv], rv = $("rv-" + i.k); if (rv) rv.textContent = advShow(i, v);
+    update();
+  }
+});
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.id === "resetBtn") { S = presetState(S.preset, S.fedClass); update(true); }
+  else if (t.id === "pinBtn") { UI.pinned = snapshot(UI.R); renderPin(UI.R); }
+  else if (t.id === "unpin") { UI.pinned = null; renderPin(UI.R); }
+  else if (t.id === "shotBtn") { document.body.classList.add("shot"); window.scrollTo(0, 0); }
+  else if (t.id === "exitShot") document.body.classList.remove("shot");
+  else if (t.id === "advAll") { UI.adviceAll = !UI.adviceAll; renderAdvisories(UI.R); }
+  else if (t.id === "feelGo") feelRun();
+  else if (t.id === "feelSkip") feel.skip = true;
+  else if (t.id === "discBtn") { const d = $("disc"), o = d.classList.toggle("open"); t.textContent = o ? "Show less" : "Show more"; t.setAttribute("aria-expanded", o); }
+  else if (t.id === "copySum") { const ta = $("sumText"); ta.select(); try { navigator.clipboard.writeText(ta.value).then(() => { $("copyMsg").textContent = "Copied."; }, () => { $("copyMsg").textContent = "Selected. Press Ctrl+C or ⌘C to copy."; }); } catch (err) { $("copyMsg").textContent = "Selected. Press Ctrl+C or ⌘C to copy."; } }
+  else if (t.dataset.we && WE_LOAD[t.dataset.we]) WE_LOAD[t.dataset.we]();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.body.classList.contains("shot")) document.body.classList.remove("shot"); });
+$("pMath").addEventListener("toggle", () => { if ($("pMath").open && UI.R) renderMath(UI.R); });
+$("pWE").addEventListener("toggle", () => { if ($("pWE").open && !UI.weDone) renderWE(); });
+$("pRec").addEventListener("toggle", () => drawRec());
+$("pAdv").addEventListener("toggle", () => { if (UI.R) syncAdvanced(UI.R); });
+const wfObs = new ResizeObserver(() => drawWF()); wfObs.observe($("wfFig"));
+const recObs = new ResizeObserver(() => drawRec()); recObs.observe($("recFig"));
+const resObs = new IntersectionObserver((en) => { for (const e of en) $("mbar").classList.toggle("show", !e.isIntersecting && !document.body.classList.contains("shot")); }); resObs.observe($("results"));
+
+renderControls(); renderMethod(); renderAdvanced();
+update(true);
+
+}
+</script>
+</body>
+</html>
